@@ -4,6 +4,8 @@ import GameListAdapter
 import GameListener
 import android.content.Intent
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.*
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +14,7 @@ import com.example.placemark.R
 import com.example.placemark.main.MainApp
 import com.example.placemark.models.GameModel
 import kotlinx.android.synthetic.main.activity_game_list.*
+import kotlinx.android.synthetic.main.card_game.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
@@ -62,7 +65,12 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onGameClick(game: GameModel) {
-        startActivityForResult(intentFor<EditActivity>().putExtra("placemark_edit", game), 0)
+//        startActivityForResult(intentFor<EditActivity>().putExtra("placemark_edit", game), 0)
+        TransitionManager.beginDelayedTransition(gameCardView, AutoTransition())
+        if(expandableCard.visibility == View.GONE)
+            expandableCard.visibility = View.VISIBLE
+        else
+            expandableCard.visibility = View.GONE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

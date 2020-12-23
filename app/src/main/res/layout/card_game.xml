@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/gameCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -10,28 +11,47 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/gameTitle"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/titleBar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:textSize="30sp" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/gameTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="Game Name"
+                android:textSize="30sp" />
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+
+                app:srcCompat="@drawable/ic_launcher_foreground" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/expandableCard"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/gameTitle" />
+            android:layout_below="@+id/titleBar"
+            android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="101dp"
-            android:layout_height="54dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="294dp"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gameTitle"
+                android:text="Extra stuff"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
