@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.placemark.R
 import com.example.placemark.main.MainApp
@@ -20,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_game_list.*
 import kotlinx.android.synthetic.main.card_game.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivityForResult
 
 class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
@@ -78,9 +80,10 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onGameClick(game: GameModel) {
-//        startActivityForResult(intentFor<EditActivity>().putExtra("placemark_edit", game), 0)
+//        startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
 
 //        https://www.youtube.com/watch?v=ehk4jbCjFbc
+        info { "Debug: ${gameCardView.id}" }
         TransitionManager.beginDelayedTransition(gameCardView, AutoTransition())
         if(expandableCard.visibility == View.GONE)
             expandableCard.visibility = View.VISIBLE
