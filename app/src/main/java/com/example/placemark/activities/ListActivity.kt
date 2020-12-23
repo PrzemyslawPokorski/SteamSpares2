@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.*
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
@@ -22,9 +23,11 @@ import org.jetbrains.anko.info
 import org.jetbrains.anko.startActivityForResult
 
 class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
-    SearchView.OnQueryTextListener {
+    SearchView.OnQueryTextListener, AdapterView.OnItemSelectedListener {
 
     lateinit var app: MainApp
+    lateinit var spinner : Spinner
+    lateinit var filter : SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +46,17 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_steamspares_list, menu)
         if (menu != null) {
-            var filter : SearchView? = menu.findItem(R.id.filter_bar).actionView as SearchView
-            filter?.setOnQueryTextListener(this)
+            filter = menu.findItem(R.id.filter_bar).actionView as SearchView
+            filter.setOnQueryTextListener(this)
 
-            var spinner : Spinner? = menu.findItem(R.id.status_spinner).actionView as Spinner
+            spinner = menu.findItem(R.id.status_spinner).actionView as Spinner
             supportActionBar?.let {
                 ArrayAdapter.createFromResource(
                     it.themedContext, R.array.used_options, android.R.layout.simple_spinner_item
                 ).also { adapter ->
                     adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-                    spinner?.adapter = adapter
+                    spinner.adapter = adapter
+                    spinner.onItemSelectedListener = this
                 }
             }
         }
@@ -90,14 +94,27 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-
         info { "Debug: Query submitted" }
         return false
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
+
         recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()), this)
         info { "Debug: Query text changed" }
         return false
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        val status = spinner.selectedItem.toString()
+        when (status){
+            "All" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString()), this)
+            "Used" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true), this)
+            "Unused" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), false), this)
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+//        TODO("Not yet implemented")
     }
 }
