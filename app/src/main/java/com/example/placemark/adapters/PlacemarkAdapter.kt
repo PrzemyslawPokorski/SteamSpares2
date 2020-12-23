@@ -6,11 +6,13 @@ import com.example.placemark.R
 import com.example.placemark.helpers.readImageFromPath
 import com.example.placemark.models.PlacemarkModel
 import kotlinx.android.synthetic.main.card_placemark.view.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 
 class PlacemarkAdapter constructor(
     private var placemarks: List<PlacemarkModel>,
     private val listener: PlacemarkListener
-) : RecyclerView.Adapter<PlacemarkAdapter.MainHolder>() {
+) : RecyclerView.Adapter<PlacemarkAdapter.MainHolder>(), AnkoLogger {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         return MainHolder(

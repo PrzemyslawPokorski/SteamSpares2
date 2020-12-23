@@ -14,6 +14,7 @@ class MainApp : Application(), AnkoLogger {
         placemarks.create(PlacemarkModel(title = "One", description = "About one..."))
         placemarks.create(PlacemarkModel(title = "Two", description = "About two..."))
         placemarks.create(PlacemarkModel(title = "Three", description = "About three..."))
+        placemarks.create(PlacemarkModel(title = "Four", description = "About four...", status = true))
 
         super.onCreate()
         info("Debug: Placemark main app started")

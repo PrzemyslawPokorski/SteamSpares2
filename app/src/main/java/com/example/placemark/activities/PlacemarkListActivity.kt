@@ -37,7 +37,7 @@ class PlacemarkListActivity : AppCompatActivity(), AnkoLogger, PlacemarkListener
 
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = PlacemarkAdapter(app.placemarks.findAll(), this)
+        recyclerView.adapter = PlacemarkAdapter(app.placemarks.getUsed(false), this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -82,7 +82,7 @@ class PlacemarkListActivity : AppCompatActivity(), AnkoLogger, PlacemarkListener
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-
+        recyclerView.adapter = PlacemarkAdapter(app.placemarks.findAll().filter { it.title.contains(newText.toString(), ignoreCase = true) }, this)
         info { "Debug: Query text changed" }
         return false
     }

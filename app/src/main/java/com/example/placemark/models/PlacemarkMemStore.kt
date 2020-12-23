@@ -17,6 +17,12 @@ class PlacemarkMemStore : PlacemarkStore, AnkoLogger {
         return placemarks
     }
 
+    fun getUsed(keyUsed : Boolean = true) : List<PlacemarkModel>{
+        var (used, unused) = placemarks.partition { it.status }
+        return if(keyUsed) used else unused
+    }
+
+
     override fun create(placemark: PlacemarkModel) {
         placemark.id = getId()
         placemarks.add(placemark)
@@ -31,6 +37,10 @@ class PlacemarkMemStore : PlacemarkStore, AnkoLogger {
             foundPlacemark.image = placemark.image
             logAll()
         }
+    }
+
+    fun delete(placemark: PlacemarkModel){
+        placemarks.remove(placemark)
     }
 
     fun logAll() {
