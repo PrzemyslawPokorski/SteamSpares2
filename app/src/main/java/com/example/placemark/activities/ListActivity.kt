@@ -1,7 +1,7 @@
 package com.example.placemark.activities
 
-import PlacemarkAdapter
-import PlacemarkListener
+import GameListAdapter
+import GameListener
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -11,20 +11,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.placemark.R
 import com.example.placemark.main.MainApp
 import com.example.placemark.models.GameModel
-import kotlinx.android.synthetic.main.activity_placemark_list.*
+import kotlinx.android.synthetic.main.activity_game_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivityForResult
 
-class ListActivity : AppCompatActivity(), AnkoLogger, PlacemarkListener,
+class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     SearchView.OnQueryTextListener {
 
     lateinit var app: MainApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_placemark_list)
+        setContentView(R.layout.activity_game_list)
         app = application as MainApp
 
         toolbar.title = title
@@ -32,11 +32,11 @@ class ListActivity : AppCompatActivity(), AnkoLogger, PlacemarkListener,
 
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = PlacemarkAdapter(app.placemarks.getUsed(false), this)
+        recyclerView.adapter = GameListAdapter(app.placemarks.getUsed(false), this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_placemark_list, menu)
+        menuInflater.inflate(R.menu.menu_steamspares_list, menu)
 
         val searchItem = menu?.findItem(R.id.app_bar_search)
         val searchView = searchItem?.actionView as SearchView
@@ -61,7 +61,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, PlacemarkListener,
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onPlacemarkClick(game: GameModel) {
+    override fun onGameClick(game: GameModel) {
         startActivityForResult(intentFor<EditActivity>().putExtra("placemark_edit", game), 0)
     }
 
@@ -77,7 +77,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, PlacemarkListener,
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        recyclerView.adapter = PlacemarkAdapter(app.placemarks.findAll().filter { it.title.contains(newText.toString(), ignoreCase = true) }, this)
+        recyclerView.adapter = GameListAdapter(app.placemarks.findAll().filter { it.title.contains(newText.toString(), ignoreCase = true) }, this)
         info { "Debug: Query text changed" }
         return false
     }

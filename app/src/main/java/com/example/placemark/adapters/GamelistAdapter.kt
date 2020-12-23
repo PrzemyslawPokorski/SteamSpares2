@@ -4,18 +4,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.placemark.R
 import com.example.placemark.models.GameModel
-import kotlinx.android.synthetic.main.card_placemark.view.*
+import kotlinx.android.synthetic.main.card_game.view.*
 import org.jetbrains.anko.AnkoLogger
 
-class PlacemarkAdapter constructor(
+class GameListAdapter constructor(
     private var games: List<GameModel>,
-    private val listener: PlacemarkListener
-) : RecyclerView.Adapter<PlacemarkAdapter.MainHolder>(), AnkoLogger {
+    private val listener: GameListener
+) : RecyclerView.Adapter<GameListAdapter.MainHolder>(), AnkoLogger {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         return MainHolder(
             LayoutInflater.from(parent.context).inflate(
-                R.layout.card_placemark,
+                R.layout.card_game,
                 parent,
                 false
             )
@@ -23,22 +23,22 @@ class PlacemarkAdapter constructor(
     }
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        val placemark = games[holder.adapterPosition]
-        holder.bind(placemark, listener)
+        val game = games[holder.adapterPosition]
+        holder.bind(game, listener)
     }
 
     override fun getItemCount(): Int = games.size
 
     class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(game: GameModel, listener: PlacemarkListener) {
-            itemView.placemarkTitle.text = game.title
+        fun bind(game: GameModel, listener: GameListener) {
+            itemView.gameTitle.text = game.title
             itemView.description.text = game.description
-            itemView.setOnClickListener { listener.onPlacemarkClick(game) }
+            itemView.setOnClickListener { listener.onGameClick(game) }
         }
     }
 }
 
-interface PlacemarkListener {
-    fun onPlacemarkClick(game: GameModel)
+interface GameListener {
+    fun onGameClick(game: GameModel)
 }
