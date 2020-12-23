@@ -11,10 +11,10 @@ class MainApp : Application(), AnkoLogger {
     val gameMemStore = GameMemStore()
 
     override fun onCreate() {
-        gameMemStore.create(GameModel(title = "One", description = "About one..."))
-        gameMemStore.create(GameModel(title = "Two", description = "About two..."))
-        gameMemStore.create(GameModel(title = "Three", description = "About three..."))
-        gameMemStore.create(GameModel(title = "Four", description = "About four...", status = true))
+        gameMemStore.create(GameModel(name = "Game1", appid = 0, code = "NONE", status = false, notes = "About game1..."))
+        gameMemStore.create(GameModel(name = "Game2", appid = 0, code = "NONE", status = false, notes = "About game2..."))
+        gameMemStore.create(GameModel(name = "Game3", appid = 0, code = "NONE", status = true, notes = "About game3..."))
+        gameMemStore.create(GameModel(name = "Game4", appid = 0, code = "NONE", status = false, notes = "About game4..."))
 
         super.onCreate()
         info("Debug: Placemark main app started")

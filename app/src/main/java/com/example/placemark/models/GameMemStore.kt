@@ -3,12 +3,6 @@ package com.example.placemark.models
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-var lastId = 0L
-
-internal fun getId(): Long {
-    return lastId++
-}
-
 class GameMemStore : GameStore, AnkoLogger {
 
     val games = ArrayList<GameModel>()
@@ -24,7 +18,6 @@ class GameMemStore : GameStore, AnkoLogger {
 
 
     override fun create(game: GameModel) {
-        game.id = getId()
         games.add(game)
         logAll()
     }
@@ -32,9 +25,10 @@ class GameMemStore : GameStore, AnkoLogger {
     override fun update(game: GameModel) {
         var foundGame: GameModel? = games.find { p -> p.id == game.id }
         if (foundGame != null) {
-            foundGame.title = game.title
-            foundGame.description = game.description
-            foundGame.image = game.image
+            foundGame.name = game.name
+            foundGame.notes = game.notes
+            foundGame.code = game.code
+            foundGame.status = game.status
             logAll()
         }
     }
@@ -44,11 +38,11 @@ class GameMemStore : GameStore, AnkoLogger {
     }
 
     fun getFiltered(query : String = "") : List<GameModel>{
-        return games.filter { it.title.contains(query, ignoreCase = true) }
+        return games.filter { it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true }
     }
 
     fun getFiltered(query : String = "", usedStatus: Boolean) : List<GameModel>{
-        return games.filter { it.title.contains(query, ignoreCase = true) && it.status == usedStatus}
+        return games.filter { (it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true) && it.status == usedStatus }
     }
 
     fun logAll() {

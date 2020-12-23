@@ -32,8 +32,8 @@ class GameListAdapter constructor(
     class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(game: GameModel, listener: GameListener) {
-            itemView.gameTitle.text = game.title
-            itemView.description.text = game.description
+            itemView.gameTitle.text = game.name
+            itemView.notes.text = game.notes
             itemView.setOnClickListener { listener.onGameClick(game) }
         }
     }

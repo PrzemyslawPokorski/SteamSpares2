@@ -52,7 +52,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
             spinner = menu.findItem(R.id.status_spinner).actionView as Spinner
             supportActionBar?.let {
                 ArrayAdapter.createFromResource(
-                    it.themedContext, R.array.used_options, android.R.layout.simple_spinner_item
+                    it.themedContext, R.array.status_options, android.R.layout.simple_spinner_item
                 ).also { adapter ->
                     adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
                     spinner.adapter = adapter
