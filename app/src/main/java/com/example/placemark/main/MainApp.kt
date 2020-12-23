@@ -8,13 +8,13 @@ import org.jetbrains.anko.info
 
 class MainApp : Application(), AnkoLogger {
 
-    val placemarks = GameMemStore()
+    val gameMemStore = GameMemStore()
 
     override fun onCreate() {
-        placemarks.create(GameModel(title = "One", description = "About one..."))
-        placemarks.create(GameModel(title = "Two", description = "About two..."))
-        placemarks.create(GameModel(title = "Three", description = "About three..."))
-        placemarks.create(GameModel(title = "Four", description = "About four...", status = true))
+        gameMemStore.create(GameModel(title = "One", description = "About one..."))
+        gameMemStore.create(GameModel(title = "Two", description = "About two..."))
+        gameMemStore.create(GameModel(title = "Three", description = "About three..."))
+        gameMemStore.create(GameModel(title = "Four", description = "About four...", status = true))
 
         super.onCreate()
         info("Debug: Placemark main app started")

@@ -11,26 +11,26 @@ internal fun getId(): Long {
 
 class GameMemStore : GameStore, AnkoLogger {
 
-    val placemarks = ArrayList<GameModel>()
+    val games = ArrayList<GameModel>()
 
     override fun findAll(): List<GameModel> {
-        return placemarks
+        return games
     }
 
     fun getUsed(keyUsed : Boolean = true) : List<GameModel>{
-        var (used, unused) = placemarks.partition { it.status }
+        var (used, unused) = games.partition { it.status }
         return if(keyUsed) used else unused
     }
 
 
     override fun create(game: GameModel) {
         game.id = getId()
-        placemarks.add(game)
+        games.add(game)
         logAll()
     }
 
     override fun update(game: GameModel) {
-        var foundGame: GameModel? = placemarks.find { p -> p.id == game.id }
+        var foundGame: GameModel? = games.find { p -> p.id == game.id }
         if (foundGame != null) {
             foundGame.title = game.title
             foundGame.description = game.description
@@ -40,10 +40,18 @@ class GameMemStore : GameStore, AnkoLogger {
     }
 
     fun delete(game: GameModel){
-        placemarks.remove(game)
+        games.remove(game)
+    }
+
+    fun getFiltered(query : String = "") : List<GameModel>{
+        return games.filter { it.title.contains(query, ignoreCase = true) }
+    }
+
+    fun getFiltered(query : String = "", usedStatus: Boolean) : List<GameModel>{
+        return games.filter { it.title.contains(query, ignoreCase = true) && it.status == usedStatus}
     }
 
     fun logAll() {
-        placemarks.forEach { info("Debug: ${it}") }
+        games.forEach { info("Debug: ${it}") }
     }
 }

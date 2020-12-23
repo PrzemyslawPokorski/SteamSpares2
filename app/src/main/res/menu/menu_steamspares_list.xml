@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/app_bar_search"
+        android:id="@+id/status_spinner"
+        android:title="Status"
+        app:actionViewClass="android.widget.Spinner"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/filter_bar"
         android:titleCondensed="Filter"
         android:title="Search"
         app:actionViewClass="android.widget.SearchView"

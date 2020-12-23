@@ -16,10 +16,31 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <androidx.appcompat.widget.Toolbar
+            android:text="@string/app_name"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleTextColor="@color/colorPrimary" />
+            app:title="SteamSpares"
+            app:titleTextColor="@color/colorPrimary">
+
+<!--            <Spinner-->
+<!--                android:id="@+id/status_spinner"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                >-->
+
+<!--            </Spinner>-->
+
+<!--            <SearchView-->
+<!--                android:id="@+id/filter_bar"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:accessibilityPaneTitle="FILTER"-->
+<!--                >-->
+
+<!--            </SearchView>-->
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
