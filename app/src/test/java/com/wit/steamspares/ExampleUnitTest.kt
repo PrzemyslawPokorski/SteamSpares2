@@ -1,4 +1,4 @@
-package com.example.steamspares
+package com.wit.steamspares
 
 import org.junit.Test
 

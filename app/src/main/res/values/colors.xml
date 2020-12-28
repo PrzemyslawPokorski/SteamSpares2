@@ -3,4 +3,6 @@
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#4c90af</color>
+    <color name="used_game">#c78989</color>
+    <color name="unused_game">#b2dbc0</color>
 </resources>
