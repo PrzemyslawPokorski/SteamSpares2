@@ -114,7 +114,6 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        //TODO Update banner?
         recyclerView.adapter?.notifyDataSetChanged()
         refreshView()
         super.onActivityResult(requestCode, resultCode, data)
