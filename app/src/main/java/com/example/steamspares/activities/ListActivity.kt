@@ -42,7 +42,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
 
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = GameListAdapter(app.gameMemStore.findAll(), this)
+        recyclerView.adapter = GameListAdapter(app.gameMemStore.findAll().toMutableList(), this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -76,15 +76,15 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
             }
             getString(R.string.delete) ->{
                 app.gameMemStore.delete(game)
-                recyclerView.adapter?.notifyDataSetChanged()
-                refreshView(spinner.selectedItem.toString())
+                refreshView()
+                recyclerView.adapter?.notifyItemRemoved(item.groupId)
+                info { "Debug: ${app.gameMemStore.games.count()}" }
             }
             getString(R.string.status_swap) -> {
                 game.status = !game.status
                 app.gameMemStore.update(game)
-                recyclerView.adapter?.notifyDataSetChanged()
+                refreshView()
                 //Had to refresh view manually as well, since notifying the change didn't
-                refreshView(spinner.selectedItem.toString())
             }
         }
         return super.onContextItemSelected(item)
@@ -126,7 +126,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
 
     override fun onQueryTextChange(newText: String?): Boolean {
 
-        recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()), this)
+        recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()).toMutableList(), this)
         info { "Debug: Query text changed" }
         return false
     }
@@ -136,12 +136,12 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         refreshView(status)
     }
 
-    fun refreshView(status: String){
+    fun refreshView(status: String = spinner.selectedItem.toString()){
         info { "Debug: Refreshing" }
         when (status){
-            "All" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString()), this)
-            "Used" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true), this)
-            "Unused" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), false), this)
+            "All" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString()).toMutableList(), this)
+            "Used" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true).toMutableList(), this)
+            "Unused" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), false).toMutableList(), this)
         }
     }
 

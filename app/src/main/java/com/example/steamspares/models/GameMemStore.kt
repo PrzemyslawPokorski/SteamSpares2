@@ -33,7 +33,7 @@ class GameMemStore : GameStore, AnkoLogger {
         }
     }
 
-    fun delete(game: GameModel){
+    override fun delete(game: GameModel){
         games.remove(game)
     }
 

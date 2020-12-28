@@ -17,7 +17,7 @@ import org.jetbrains.anko.info
 
 
 class GameListAdapter constructor(
-    private var games: List<GameModel>,
+    private var games: MutableList<GameModel>,
     private val listener: GameListener
 ) : RecyclerView.Adapter<GameListAdapter.MainHolder>(), AnkoLogger {
 
@@ -71,10 +71,6 @@ class GameListAdapter constructor(
                 clipboard.setPrimaryClip(clip)
                 Toast.makeText(it.context, "CODE COPIED", Toast.LENGTH_SHORT).show()
             }
-        }
-
-        fun getGame(id : Int){
-
         }
     }
 }
