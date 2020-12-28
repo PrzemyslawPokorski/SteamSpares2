@@ -81,7 +81,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
             }
             getString(R.string.status_swap) -> {
                 game.status = !game.status
-                app.gameMemStore.update(game)
+                app.gameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
                 refreshView()
                 //Had to refresh view manually as well, since notifying the change didn't
             }

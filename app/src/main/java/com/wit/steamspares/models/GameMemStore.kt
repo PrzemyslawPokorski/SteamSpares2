@@ -11,7 +11,7 @@ import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.info
 import kotlin.concurrent.thread
 
-class GameMemStore : GameStore, AnkoLogger {
+class GameMemStore : AnkoLogger {
     val games = ArrayList<GameModel>()
     var steamList = ArrayList<SteamAppModel>()
     var jsonHelper : jsonHelper
@@ -23,7 +23,7 @@ class GameMemStore : GameStore, AnkoLogger {
         }
     }
 
-    override fun findAll(): List<GameModel> {
+    fun findAll(): List<GameModel> {
         return games
     }
 
@@ -32,32 +32,29 @@ class GameMemStore : GameStore, AnkoLogger {
         return if(keyUsed) used else unused
     }
 
-    override fun create(game: GameModel) {
-        game.appid = findSteamId(game.name)
-        games.add(game)
+    fun create(name: String, code : String, status : Boolean, notes: String) {
+        games.add(GameModel(findSteamId(name), name, code, status, notes))
         logAll()
     }
 
-    override fun update(game: GameModel) {
-        var foundGame: GameModel? = games.find { p -> p.id == game.id }
+    fun update(id : Int, name: String, code : String, status : Boolean, notes: String?) {
+        var foundGame: GameModel? = games.find { p -> p.id == id }
         if (foundGame != null) {
-            info { "Debug: Updating $foundGame to $game" }
-            foundGame.id = game.code.hashCode()
-            foundGame.name = game.name
-            foundGame.notes = game.notes
-            foundGame.code = game.code
-            foundGame.status = game.status
-            foundGame.appid = findSteamId(game.name)
+            foundGame.id = code.hashCode()
+            foundGame.name = name
+            foundGame.notes = notes
+            foundGame.code = code
+            foundGame.status = status
+            foundGame.appid = findSteamId(name)
             foundGame.url = getGameUrl(foundGame.appid)
             foundGame.bannerUrl = getImageUrl(foundGame.appid)
-            info { "Debug: steamappid found: ${foundGame.appid}" }
             logAll()
         }
         else
-            info { "Superdebug: Game $game not found" }
+            info { "Superdebug: Game $id, $name not found" }
     }
 
-    override fun delete(game: GameModel){
+    fun delete(game: GameModel){
         games.remove(game)
     }
 
@@ -71,6 +68,7 @@ class GameMemStore : GameStore, AnkoLogger {
 
     fun logAll() {
         games.forEach { info("Debug: ${it}") }
+        info { "------------------------------------------------------------------------------------------------------------------------------------------------------" }
     }
 
     fun findSteamId(name : String) : Int{

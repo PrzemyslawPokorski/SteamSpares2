@@ -21,7 +21,8 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
     val IMAGE_REQUEST = 1
     lateinit var app: MainApp
     lateinit var spinner: Spinner
-    var game = GameModel(appid = 0, code = "NULL", status = false)
+//    var game = GameModel(appid = 0, code = "NULL", status = false)
+    var editingGameId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         var editing = false
@@ -41,27 +42,28 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
         setSupportActionBar(toolbarAdd)
 
         if (intent.hasExtra("game_edit")) {
-            game = intent.extras?.getParcelable<GameModel>("game_edit")!!
-            gameTitle.setText(game.name)
-            gameCode.setText(game.code)
+            val gameToEdit = intent.extras?.getParcelable<GameModel>("game_edit")!!
+            gameTitle.setText(gameToEdit.name)
+            gameCode.setText(gameToEdit.code)
             btnAdd.setText(R.string.button_saveGame)
-            spinner.setSelection(if(game.status) 1 else 0)
+            spinner.setSelection(if(gameToEdit.status) 1 else 0)
+            editingGameId = gameToEdit.id
             editing = true
         }
 
         info("Debug: Placemark activity started")
 
         btnAdd.setOnClickListener(){
-            game.name = gameTitle.text.toString()
-            game.code = gameCode.text.toString()
-            game.status = spinner.selectedItem.toString().equals("Used", ignoreCase = true)
-            game.notes = gameNotes.text.toString()
+            var name = gameTitle.text.toString()
+            var code = gameCode.text.toString()
+            var status = spinner.selectedItem.toString().equals("Used", ignoreCase = true)
+            var notes = gameNotes.text.toString()
 
-            if(game.name.isNotEmpty() && game.code.isNotEmpty()){
+            if(name.isNotEmpty() && code.isNotEmpty()){
                 if(!editing)
-                    app.gameMemStore.create(game)
+                    app.gameMemStore.create(name, code, status, notes)
                 else
-                    app.gameMemStore.update(game)
+                    app.gameMemStore.update(editingGameId, name, code, status, notes)
 
                 setResult(AppCompatActivity.RESULT_OK)
 
