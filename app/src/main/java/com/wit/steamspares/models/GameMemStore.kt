@@ -41,6 +41,8 @@ class GameMemStore : GameStore, AnkoLogger {
     override fun update(game: GameModel) {
         var foundGame: GameModel? = games.find { p -> p.id == game.id }
         if (foundGame != null) {
+            info { "Debug: Updating $foundGame to $game" }
+            foundGame.id = game.code.hashCode()
             foundGame.name = game.name
             foundGame.notes = game.notes
             foundGame.code = game.code
@@ -51,6 +53,8 @@ class GameMemStore : GameStore, AnkoLogger {
             info { "Debug: steamappid found: ${foundGame.appid}" }
             logAll()
         }
+        else
+            info { "Superdebug: Game $game not found" }
     }
 
     override fun delete(game: GameModel){

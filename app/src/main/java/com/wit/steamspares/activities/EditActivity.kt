@@ -45,6 +45,7 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
             gameTitle.setText(game.name)
             gameCode.setText(game.code)
             btnAdd.setText(R.string.button_saveGame)
+            spinner.setSelection(if(game.status) 1 else 0)
             editing = true
         }
 
@@ -62,7 +63,6 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
                 else
                     app.gameMemStore.update(game)
 
-                toast("Add button pressed: ${app.gameMemStore}")
                 setResult(AppCompatActivity.RESULT_OK)
 
                 finish()

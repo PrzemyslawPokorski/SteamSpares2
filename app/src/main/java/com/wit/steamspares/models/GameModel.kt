@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class GameModel(var appid : Int, var name: String = "Missing", var code : String, var status : Boolean, var notes : String? = null, var url : String? = "", var bannerUrl : String? = "") : Parcelable{
     //Game code will always be unique so we can use that as internal storage id
-    val id = code.hashCode()
+    var id = code.hashCode()
 
     init{
         url = "https://store.steampowered.com/app/$appid"
