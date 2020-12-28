@@ -1,5 +1,6 @@
 package com.wit.steamspares.models
 
+import android.content.Context
 import com.wit.steamspares.helpers.jsonHelper
 import com.wit.steamspares.model.SteamAppModel
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +12,8 @@ import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.info
 import kotlin.concurrent.thread
 
-class GameMemStore : AnkoLogger {
-    val games = ArrayList<GameModel>()
+class GameMemStore(val context : Context) : AnkoLogger {
+    var games = ArrayList<GameModel>()
     var steamList = ArrayList<SteamAppModel>()
     var jsonHelper : jsonHelper
 
@@ -24,6 +25,8 @@ class GameMemStore : AnkoLogger {
     }
 
     fun findAll(): List<GameModel> {
+        if(games.count() == 0 && jsonHelper.fileExists(context))
+            games = jsonHelper.loadGamesFromJson(context)
         return games
     }
 
@@ -34,6 +37,7 @@ class GameMemStore : AnkoLogger {
 
     fun create(name: String, code : String, status : Boolean, notes: String) {
         games.add(GameModel(findSteamId(name), name, code, status, notes))
+        jsonHelper.saveGamesToJson(games, context)
         logAll()
     }
 
@@ -48,6 +52,7 @@ class GameMemStore : AnkoLogger {
             foundGame.appid = findSteamId(name)
             foundGame.url = getGameUrl(foundGame.appid)
             foundGame.bannerUrl = getImageUrl(foundGame.appid)
+            jsonHelper.saveGamesToJson(games, context)
             logAll()
         }
         else
@@ -56,6 +61,8 @@ class GameMemStore : AnkoLogger {
 
     fun delete(game: GameModel){
         games.remove(game)
+        jsonHelper.saveGamesToJson(games, context)
+        jsonHelper.fileExists(context)
     }
 
     fun getFiltered(query : String = "") : List<GameModel>{
