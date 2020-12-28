@@ -75,6 +75,19 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
                 val game = recyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
                 startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
             }
+            getString(R.string.delete) ->{
+                //TODO DELETE
+                recyclerView.adapter?.notifyDataSetChanged()
+                refreshView(spinner.selectedItem.toString())
+            }
+            getString(R.string.status_swap) -> {
+                val game = recyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
+                game.status = !game.status
+                app.gameMemStore.update(game)
+                recyclerView.adapter?.notifyDataSetChanged()
+                //Had to refresh view manually as well, since notifying the change didn't
+                refreshView(spinner.selectedItem.toString())
+            }
         }
         return super.onContextItemSelected(item)
     }
@@ -122,6 +135,11 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val status = spinner.selectedItem.toString()
+        refreshView(status)
+    }
+
+    fun refreshView(status: String){
+        info { "Debug: Refreshing" }
         when (status){
             "All" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString()), this)
             "Used" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true), this)

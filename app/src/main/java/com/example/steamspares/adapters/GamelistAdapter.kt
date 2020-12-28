@@ -59,7 +59,8 @@ class GameListAdapter constructor(
 
             itemView.setOnCreateContextMenuListener { menu, v, menuInfo ->
                 menu.add(adapterPosition, v.id, 0, R.string.edit)
-                menu.add(adapterPosition, v.id, 1, R.string.delete)
+                menu.add(adapterPosition, v.id, 2, R.string.delete)
+                menu.add(adapterPosition, v.id, 1, R.string.status_swap)
             }
 
 //            itemView.setOnClickListener { listener.onGameClick(game) }
