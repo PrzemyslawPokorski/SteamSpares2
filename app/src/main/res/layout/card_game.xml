@@ -54,16 +54,48 @@
 
                 <TextView
                     android:id="@+id/notes"
-                    android:layout_width="364dp"
-                    android:layout_height="37dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="Extra stuff"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.498"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/storeLink"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
                     tools:layout_conversion_absoluteHeight="0dp"
                     tools:layout_conversion_absoluteWidth="0dp" />
+
+                <TextView
+                    android:id="@+id/storeLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:linksClickable="true"
+                    android:text="Link"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/notes"
+                    app:layout_constraintBottom_toTopOf="@id/codeText"
+                    tools:layout_conversion_absoluteHeight="0dp"
+                    tools:layout_conversion_absoluteWidth="0dp" />
+
+                <TextView
+                    android:id="@+id/codeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Code"
+                    android:textSize="32dp"
+                    android:textAlignment="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/storeLink"
+                    app:layout_constraintTop_toBottomOf="@id/storeLink"
+                    tools:layout_conversion_absoluteHeight="0dp"
+                    tools:layout_conversion_absoluteWidth="0dp" />
+
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
