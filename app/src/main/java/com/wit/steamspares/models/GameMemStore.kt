@@ -15,18 +15,17 @@ import kotlin.concurrent.thread
 class GameMemStore(val context : Context) : AnkoLogger {
     var games = ArrayList<GameModel>()
     var steamList = ArrayList<SteamAppModel>()
-    var jsonHelper : jsonHelper
+    lateinit var jsonHelper : jsonHelper
 
-    init {
+    fun findAll(): List<GameModel> {
         runBlocking {
             jsonHelper = withContext(Dispatchers.IO){jsonHelper()}
             steamList = jsonHelper.steamList as ArrayList<SteamAppModel>
         }
-    }
 
-    fun findAll(): List<GameModel> {
         if(games.count() == 0 && jsonHelper.fileExists(context))
             games = jsonHelper.loadGamesFromJson(context)
+
         return games
     }
 
