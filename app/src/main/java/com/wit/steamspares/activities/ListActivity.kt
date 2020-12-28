@@ -13,11 +13,13 @@ import android.widget.SearchView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.squareup.picasso.Picasso
 import com.wit.steamspares.R
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game_list.*
 import kotlinx.android.synthetic.main.card_game.*
+import kotlinx.android.synthetic.main.card_game.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
@@ -102,8 +104,6 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onGameClick(game: GameModel) {
-//        startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
-
 //        https://www.youtube.com/watch?v=ehk4jbCjFbc
         info { "Debug: ${gameCardView.id}" }
         TransitionManager.beginDelayedTransition(gameCardView, AutoTransition())
@@ -114,6 +114,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //TODO Update banner?
         recyclerView.adapter?.notifyDataSetChanged()
         refreshView()
         super.onActivityResult(requestCode, resultCode, data)

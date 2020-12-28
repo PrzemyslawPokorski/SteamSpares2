@@ -91,6 +91,6 @@ class GameMemStore : AnkoLogger {
     }
 
     fun getImageUrl(id : Int) : String{
-        return "https://cdn.cloudflare.steamstatic.com/steam/apps/${id}/header_alt_assets_3.jpg"
+        return "https://cdn.cloudflare.steamstatic.com/steam/apps/${id}/header.jpg"
     }
 }

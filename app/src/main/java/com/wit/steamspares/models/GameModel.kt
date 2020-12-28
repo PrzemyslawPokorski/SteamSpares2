@@ -12,7 +12,7 @@ data class GameModel(var appid : Int, var name: String = "Missing", var code : S
 
     init{
         url = "https://store.steampowered.com/app/$appid"
-        bannerUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/header_alt_assets_3.jpg"
+        bannerUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/header.jpg"
         name = if (name.isEmpty()) "Name not given" else name
         code = if (code.isEmpty()) "Code not given" else code
 
