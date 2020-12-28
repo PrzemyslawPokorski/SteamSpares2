@@ -69,19 +69,17 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         info { "Debug: Context item clicked: ${item.toString()}" }
-
+        val game = recyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
         when(item.toString()){
             getString(R.string.edit) -> {
-                val game = recyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
                 startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
             }
             getString(R.string.delete) ->{
-                //TODO DELETE
+                app.gameMemStore.delete(game)
                 recyclerView.adapter?.notifyDataSetChanged()
                 refreshView(spinner.selectedItem.toString())
             }
             getString(R.string.status_swap) -> {
-                val game = recyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
                 game.status = !game.status
                 app.gameMemStore.update(game)
                 recyclerView.adapter?.notifyDataSetChanged()
