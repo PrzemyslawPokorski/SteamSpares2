@@ -1,4 +1,4 @@
-package com.example.placemark
+package com.example.steamspares
 
 import org.junit.Test
 

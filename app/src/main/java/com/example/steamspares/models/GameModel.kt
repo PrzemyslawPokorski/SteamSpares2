@@ -1,4 +1,4 @@
-package com.example.placemark.models
+package com.example.steamspares.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

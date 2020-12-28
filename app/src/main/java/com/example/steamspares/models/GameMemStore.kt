@@ -1,4 +1,4 @@
-package com.example.placemark.models
+package com.example.steamspares.models
 
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info

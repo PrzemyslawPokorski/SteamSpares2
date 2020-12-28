@@ -1,4 +1,4 @@
-package com.example.placemark.activities
+package com.example.steamspares.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,13 +7,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import com.example.placemark.R
-import com.example.placemark.main.MainApp
+import com.example.steamspares.R
+import com.example.steamspares.main.MainApp
 import kotlinx.android.synthetic.main.activity_game.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
-import com.example.placemark.models.GameModel
+import com.example.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game.gameTitle
 import org.jetbrains.anko.startActivityForResult
 
@@ -46,7 +46,6 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
             gameCode.setText(game.code)
             btnAdd.setText(R.string.button_saveGame)
             editing = true
-            toast(game.toString())
         }
 
         info("Debug: Placemark activity started")

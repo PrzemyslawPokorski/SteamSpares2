@@ -1,4 +1,4 @@
-package com.example.placemark.activities
+package com.example.steamspares.activities
 
 import GameListAdapter
 import GameListener
@@ -6,17 +6,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
+import android.transition.Visibility
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.placemark.R
-import com.example.placemark.main.MainApp
-import com.example.placemark.models.GameModel
+import com.example.steamspares.R
+import com.example.steamspares.main.MainApp
+import com.example.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game_list.*
 import kotlinx.android.synthetic.main.card_game.*
 import org.jetbrains.anko.AnkoLogger
@@ -65,6 +65,18 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
 
 
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        info { "Debug: Context item clicked: ${item.toString()}" }
+
+        when(item.toString()){
+            getString(R.string.edit) -> {
+                val game = recyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
+                startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
+            }
+        }
+        return super.onContextItemSelected(item)
     }
 
     fun filter(){

@@ -1,4 +1,4 @@
-package com.example.placemark.models
+package com.example.steamspares.models
 
 interface GameStore {
     fun findAll(): List<GameModel>

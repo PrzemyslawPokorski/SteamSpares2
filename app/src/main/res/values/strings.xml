@@ -12,6 +12,8 @@
     <string name="list_menu_cancel">Cancel</string>
     <string name="empty_name_hint">"Plase enter a title"</string>
     <string name="empty_key_hint">"Plase enter a key"</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
     <string-array name="status_options">
         <item>All</item>
         <item>Unused</item>
