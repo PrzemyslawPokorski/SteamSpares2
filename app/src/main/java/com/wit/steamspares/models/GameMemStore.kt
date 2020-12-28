@@ -1,6 +1,7 @@
 package com.wit.steamspares.models
 
 import android.content.Context
+import com.google.gson.reflect.TypeToken
 import com.wit.steamspares.helpers.jsonHelper
 import com.wit.steamspares.model.SteamAppModel
 import kotlinx.coroutines.Dispatchers
@@ -13,17 +14,29 @@ import org.jetbrains.anko.info
 import kotlin.concurrent.thread
 
 class GameMemStore(val context : Context) : AnkoLogger {
+    val GAMES_FILE = "steamspares.json"
+    val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
+    val steamAppType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
+    val STEAMAPP_FILE = "steamappids.json"
     var games = ArrayList<GameModel>()
     var steamList = ArrayList<SteamAppModel>()
     lateinit var jsonHelper : jsonHelper
 
     fun findAll(): List<GameModel> {
-        runBlocking {
-            jsonHelper = withContext(Dispatchers.IO){jsonHelper()}
-            steamList = jsonHelper.steamList as ArrayList<SteamAppModel>
+        if(steamList.count() == 0){
+            runBlocking {
+                jsonHelper = jsonHelper()
+                if (jsonHelper.fileExists(STEAMAPP_FILE, context)){
+                    steamList = jsonHelper.loadIdsFromJson(context)
+                }
+                else{
+                    steamList = jsonHelper.downloadSteamAppList() as ArrayList<SteamAppModel>
+                    jsonHelper.saveIdsToJson(steamList, context)
+                }
+            }
         }
 
-        if(games.count() == 0 && jsonHelper.fileExists(context))
+        if(games.count() == 0 && jsonHelper.fileExists(GAMES_FILE, context))
             games = jsonHelper.loadGamesFromJson(context)
 
         return games
@@ -61,7 +74,6 @@ class GameMemStore(val context : Context) : AnkoLogger {
     fun delete(game: GameModel){
         games.remove(game)
         jsonHelper.saveGamesToJson(games, context)
-        jsonHelper.fileExists(context)
     }
 
     fun getFiltered(query : String = "") : List<GameModel>{
@@ -77,7 +89,7 @@ class GameMemStore(val context : Context) : AnkoLogger {
         info { "------------------------------------------------------------------------------------------------------------------------------------------------------" }
     }
 
-    fun findSteamId(name : String) : Int{
+    fun findSteamId(name : String, idsUpdated : Boolean = false) : Int{
         //Filter down to names containing
         val apps = steamList.filter { it.name.contains(name, ignoreCase = true) }
         val app = apps.find { it.name.equals(name, ignoreCase = true) }
@@ -88,6 +100,14 @@ class GameMemStore(val context : Context) : AnkoLogger {
         //Else return "closest match" (first that was similar based on contain)
         if(apps.isNotEmpty())
             return apps[0].appid
+
+        //If nothing was found, update the appids json (using diff would be awesome) TODO
+        if(!idsUpdated) {
+            info { "Game not found, updating steam app ids" }
+            steamList = jsonHelper.downloadSteamAppList() as ArrayList<SteamAppModel>
+            jsonHelper.saveIdsToJson(steamList, context)
+            return findSteamId(name, true)
+        }
 
         return 0
     }

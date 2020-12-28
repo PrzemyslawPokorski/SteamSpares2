@@ -7,9 +7,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.wit.steamspares.model.SteamAppModel
 import com.wit.steamspares.models.GameModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.info
@@ -19,9 +17,10 @@ import kotlin.concurrent.thread
 
 class jsonHelper : AnkoLogger{
     val gson = GsonBuilder().setPrettyPrinting().create()
-    val JSON_FILE = "steamspares.json"
-    val type = object : TypeToken<MutableList<GameModel>>() { }.type
-    var steamList = downloadSteamAppList()
+    val GAMES_FILE = "steamspares.json"
+    val gamesType = object : TypeToken<MutableList<GameModel>>() { }.type
+    val APPIDS_FILE = "steamappids.json"
+    val appidsType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
 
     @UiThread
     fun downloadSteamAppList() : List<SteamAppModel>{
@@ -31,8 +30,9 @@ class jsonHelper : AnkoLogger{
             runBlocking {
                 info { "Debug: Blocking..." }
 
-                jsonString =
+                jsonString = withContext(Dispatchers.IO) {
                     URL("https://api.steampowered.com/ISteamApps/GetAppList/v0001/").readText()
+                }
 
             }
             jsonString = jsonString.drop(26)
@@ -47,10 +47,10 @@ class jsonHelper : AnkoLogger{
 
     fun saveGamesToJson(games : List<GameModel>, context: Context){
         info { context }
-        val jsonString = gson.toJson(games, type)
+        val jsonString = gson.toJson(games, gamesType)
         try {
 
-            val outputStreamWriter = OutputStreamWriter(context.openFileOutput(JSON_FILE, Context.MODE_PRIVATE))
+            val outputStreamWriter = OutputStreamWriter(context.openFileOutput(GAMES_FILE, Context.MODE_PRIVATE))
             outputStreamWriter.write(jsonString)
             outputStreamWriter.close()
         } catch (e: Exception) {
@@ -61,18 +61,42 @@ class jsonHelper : AnkoLogger{
     fun loadGamesFromJson(context: Context) : ArrayList<GameModel>{
         var jsonString = ""
         try {
-            jsonString = context.openFileInput(JSON_FILE).bufferedReader().use { it.readText() }
+            jsonString = context.openFileInput(GAMES_FILE).bufferedReader().use { it.readText() }
         } catch (e: FileNotFoundException) {
             Log.e("Error: ", "file not found: " + e.toString());
         } catch (e: IOException) {
             Log.e("Error: ", "cannot read file: " + e.toString());
         }
-        return gson.fromJson(jsonString, type)
+        return gson.fromJson(jsonString, gamesType)
     }
 
-    fun fileExists(context: Context): Boolean {
+    fun saveIdsToJson(games : List<SteamAppModel>, context: Context){
         info { context }
-        val file = context.getFileStreamPath(JSON_FILE)
+        val jsonString = gson.toJson(games, appidsType)
+        try {
+            val outputStreamWriter = OutputStreamWriter(context.openFileOutput(APPIDS_FILE, Context.MODE_PRIVATE))
+            outputStreamWriter.write(jsonString)
+            outputStreamWriter.close()
+        } catch (e: Exception) {
+            Log.e("Error: ", "Cannot read file: " + e.toString());
+        }
+    }
+
+    fun loadIdsFromJson(context: Context) : ArrayList<SteamAppModel>{
+        var jsonString = ""
+        try {
+            jsonString = context.openFileInput(APPIDS_FILE).bufferedReader().use { it.readText() }
+        } catch (e: FileNotFoundException) {
+            Log.e("Error: ", "file not found: " + e.toString());
+        } catch (e: IOException) {
+            Log.e("Error: ", "cannot read file: " + e.toString());
+        }
+        return gson.fromJson(jsonString, appidsType)
+    }
+
+    fun fileExists(file : String, context: Context): Boolean {
+        info { context }
+        val file = context.getFileStreamPath(file)
         return file.exists()
     }
 }
