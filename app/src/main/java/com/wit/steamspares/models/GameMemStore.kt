@@ -26,7 +26,7 @@ class GameMemStore(val context : Context) : AnkoLogger {
         if(steamList.count() == 0){
             runBlocking {
                 jsonHelper = jsonHelper()
-                if (jsonHelper.fileExists(STEAMAPP_FILE, context)){
+                if (jsonHelper.fileExists(STEAMAPP_FILE, context) && jsonHelper.lastFileUpdate(STEAMAPP_FILE, context) < 60){
                     steamList = jsonHelper.loadIdsFromJson(context)
                 }
                 else{
@@ -100,14 +100,9 @@ class GameMemStore(val context : Context) : AnkoLogger {
         //Else return "closest match" (first that was similar based on contain)
         if(apps.isNotEmpty())
             return apps[0].appid
-
-        //If nothing was found, update the appids json (using diff would be awesome) TODO
-        if(!idsUpdated) {
-            info { "Game not found, updating steam app ids" }
-            steamList = jsonHelper.downloadSteamAppList() as ArrayList<SteamAppModel>
-            jsonHelper.saveIdsToJson(steamList, context)
-            return findSteamId(name, true)
-        }
+        else
+            if(!idsUpdated && jsonHelper.lastFileUpdate(STEAMAPP_FILE, context) >= 60)
+                return findSteamId(name, true)
 
         return 0
     }

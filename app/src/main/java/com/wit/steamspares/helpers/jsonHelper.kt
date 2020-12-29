@@ -1,6 +1,7 @@
 package com.wit.steamspares.helpers
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.annotation.UiThread
 import com.google.gson.GsonBuilder
@@ -13,7 +14,13 @@ import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.info
 import java.io.*
 import java.net.URL
+import java.nio.file.Files
+import java.nio.file.attribute.BasicFileAttributes
+import java.time.Instant
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
+import kotlin.system.measureTimeMillis
 
 class jsonHelper : AnkoLogger{
     val gson = GsonBuilder().setPrettyPrinting().create()
@@ -98,5 +105,21 @@ class jsonHelper : AnkoLogger{
         info { context }
         val file = context.getFileStreamPath(file)
         return file.exists()
+    }
+
+    fun lastFileUpdate(file : String, context: Context) : Long //Return difference in hours
+    {
+        val fileMod = context.getFileStreamPath(file).lastModified()
+        val now = Instant.now().toEpochMilli()
+
+        val diff: Long = Date(now).getTime() - Date(fileMod).getTime()
+        val seconds = diff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+
+        info { "Last steam app ids update: $minutes minutes ago" }
+
+        return minutes
     }
 }
