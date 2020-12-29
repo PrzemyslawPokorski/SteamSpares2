@@ -1,21 +1,21 @@
 package com.wit.steamspares.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
 import com.wit.steamspares.R
 import com.wit.steamspares.main.MainApp
+import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
-import com.wit.steamspares.models.GameModel
-import kotlinx.android.synthetic.main.activity_game.gameTitle
 import org.jetbrains.anko.startActivityForResult
+import org.jetbrains.anko.toast
+
 
 class EditActivity : AppCompatActivity(), AnkoLogger {
     val IMAGE_REQUEST = 1
@@ -37,6 +37,17 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
             adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
             spinner.adapter = adapter
         }
+
+        var gameNames = ArrayList<String>()
+        app.gameMemStore.steamList.forEach{
+            gameNames.add(it.name)
+        }
+
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_dropdown_item_1line, gameNames
+        )
+        gameTitle.setAdapter(adapter)
 
         toolbarAdd.title = title
         setSupportActionBar(toolbarAdd)
