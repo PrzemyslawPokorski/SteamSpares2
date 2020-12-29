@@ -42,6 +42,7 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
         app.gameMemStore.steamList.forEach{
             gameNames.add(it.name)
         }
+        gameNames.sort()
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
             this,
