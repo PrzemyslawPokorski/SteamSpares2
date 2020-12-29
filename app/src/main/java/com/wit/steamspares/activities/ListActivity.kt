@@ -60,6 +60,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
                     adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
                     spinner.adapter = adapter
                     spinner.onItemSelectedListener = this
+                    spinner.setSelection(1)
                 }
             }
         }
