@@ -10,7 +10,8 @@
     <string name="button_changeImage"> Change Image </string>
     <string name="action_settings">Settings</string>
     <string name="list_menu_cancel">Cancel</string>
-    <string name="empty_name_hint">"Plase enter a title and a key"</string>
+    <string name="empty_name_hint">"Plase enter a title"</string>
+    <string name="bad_code_hint">"Plase enter proper key code"</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="status_swap">Swap Status</string>
