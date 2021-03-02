@@ -1,7 +1,6 @@
 package com.wit.steamspares.fragments
 
 import GameListAdapter
-import GameListener
 import android.graphics.Color
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -30,7 +29,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [GameListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class GameListFragment : Fragment(), GameListener, AnkoLogger
+class GameListFragment : Fragment(), AnkoLogger
      {
     private lateinit var adapter: GameListAdapter
     private lateinit var gameMemStore: GameMemStore
@@ -55,7 +54,6 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
         gameRecyclerView.adapter = adapter
         (activity as ListActivity).askForMenu(ListActivity.MenuType.LIST)
-        view?.setBackgroundColor(Color.RED)
     }
 
 
@@ -83,78 +81,6 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
         return super.onContextItemSelected(item)
     }
 
-    override fun onGameClick(game: GameModel) {
-//        https://www.youtube.com/watch?v=ehk4jbCjFbc
-        info { "Debug: ${gameCardView.id}" }
-        TransitionManager.beginDelayedTransition(gameCardView, AutoTransition())
-        if(expandableCard.visibility == View.GONE)
-            expandableCard.visibility = View.VISIBLE
-        else
-            expandableCard.visibility = View.GONE
-    }
-
-     override fun onStart() {
-         super.onStart()
-         info { "Debug list fragment: Start" }
-     }
-
-     override fun onStop() {
-         super.onStop()
-         info { "Debug list fragment: Stop" }
-     }
-
-     override fun onPause() {
-         super.onPause()
-         info { "Debug list fragment: Pause" }
-     }
-
-     override fun onResume() {
-         super.onResume()
-         info { "Debug list fragment: Resume" }
-     }
-
-         override fun onDestroyView() {
-             super.onDestroyView()
-             info { "Debug list fragment: DestroView" }
-         }
-
-         override fun onDestroy() {
-             super.onDestroy()
-             info { "Debug list fragment: Destroy" }
-         }
-
-         override fun onDetach() {
-             super.onDetach()
-             info { "Debug list fragment: Detach" }
-         }
-
-//
-//    override fun onQueryTextSubmit(query: String?): Boolean {
-//        info { "Debug: Query submitted" }
-//        return false
-//    }
-//
-//    override fun onQueryTextChange(newText: String?): Boolean {
-//
-////        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()).toMutableList())
-//        info { "Debug: Query text changed" }
-//        return false
-//    }
-
-//    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//        val status = spinner.selectedItem.toString()
-//        refreshView(status)
-//    }
-
-//    fun refreshView(status: String = spinner.selectedItem.toString()){
-//        info { "Debug: Refreshing" }
-////        when (status){
-////            "All" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString()).toMutableList(), this)
-////            "Used" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true).toMutableList(), this)
-////            "Unused" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), false).toMutableList(), this)
-////        }
-//    }
-
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -164,8 +90,6 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
          * @param param2 Parameter 2.
          * @return A new instance of fragment GameListFragment.
          */
-
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(memStore: GameMemStore, usedStatus : Boolean) =
             GameListFragment().apply {

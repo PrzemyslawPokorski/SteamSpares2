@@ -1,7 +1,6 @@
 package com.wit.steamspares.activities
 
 import GameListAdapter
-import GameListener
 import android.content.Intent
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -25,7 +24,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.startActivityForResult
 
-class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
+class ListActivity : AppCompatActivity(), AnkoLogger,
     SearchView.OnQueryTextListener, AdapterView.OnItemSelectedListener {
     enum class MenuType{
         LIST, EDIT
@@ -95,16 +94,6 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onGameClick(game: GameModel) {
-//        https://www.youtube.com/watch?v=ehk4jbCjFbc
-        info { "Debug: ${gameCardView.id}" }
-        TransitionManager.beginDelayedTransition(gameCardView, AutoTransition())
-        if(expandableCard.visibility == View.GONE)
-            expandableCard.visibility = View.VISIBLE
-        else
-            expandableCard.visibility = View.GONE
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 //        gameRecyclerView.adapter?.notifyDataSetChanged()
         refreshView()
@@ -145,7 +134,6 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     fun askForMenu(menuType: MenuType){
-        //TODO: Change top bar menu as required
         topMenu = menuType
         info { "Debug: Navigate asked for menu $menuType" }
         invalidateOptionsMenu()

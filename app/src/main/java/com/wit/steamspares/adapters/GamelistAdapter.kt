@@ -68,8 +68,6 @@ class GameListAdapter constructor(
                 menu.add(adapterPosition, v.id, 1, R.string.status_swap)
             }
 
-//            itemView.setOnClickListener { listener.onGameClick(game) }
-
             itemView.codeText.setOnClickListener {
                 var clipboard = it.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 var clip = ClipData.newPlainText("label", game.code)
@@ -78,8 +76,4 @@ class GameListAdapter constructor(
             }
         }
     }
-}
-
-interface GameListener {
-    fun onGameClick(game: GameModel)
 }
