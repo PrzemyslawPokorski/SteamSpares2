@@ -53,6 +53,7 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
         info { "Debug: onActivityCreated - gamelist fragment "}
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
         gameRecyclerView.adapter = adapter
+        (activity as ListActivity).askForMenu(ListActivity.MenuType.LIST)
     }
 
 

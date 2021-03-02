@@ -56,9 +56,13 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         info { "Debug: CreateOptionsMenu" }
         when(topMenu){
-            MenuType.EDIT -> menuInflater.inflate(R.menu.menu_steamspares_add, menu)
+            MenuType.EDIT -> {
+                menuInflater.inflate(R.menu.menu_steamspares_add, menu)
+                info { "Debug: Add menu inflated" }
+            }
             MenuType.LIST -> {
                 menuInflater.inflate(R.menu.menu_steamspares_list, menu)
+                info { "Debug: List menu inflated" }
 
                 if (menu != null) {
                     filter = menu.findItem(R.id.filter_bar).actionView as SearchView
@@ -85,11 +89,13 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_add -> {
-                navigateTo(EditGameFragment.newInstance(app.gameMemStore), MenuType.EDIT)
+                navigateTo(EditGameFragment.newInstance(app.gameMemStore))
                 info("Debug: List add button clicked")
             }
             R.id.action_cancel ->{
                 supportFragmentManager.popBackStack()
+                topMenu = MenuType.LIST
+                invalidateOptionsMenu()
                 info("Debug: Edit cancel button clicked")
             }
         }
@@ -138,16 +144,18 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         }
     }
 
-    fun navigateTo(fragment: Fragment, fragmentType : MenuType = MenuType.LIST,
-                   addToStack: Boolean = true) {
+    fun navigateTo(fragment: Fragment, addToStack: Boolean = true) {
         val ft = supportFragmentManager.beginTransaction()
             .replace(R.id.mainAppFrame, fragment)
         if(addToStack)
             ft.addToBackStack(null)
         ft.commit()
+    }
 
+    fun askForMenu(menuType: MenuType){
         //TODO: Change top bar menu as required
-        topMenu = fragmentType
+        topMenu = menuType
+        info { "Debug: Navigate asked for menu $menuType" }
         invalidateOptionsMenu()
     }
 
