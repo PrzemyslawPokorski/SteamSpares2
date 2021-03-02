@@ -6,50 +6,59 @@
     android:layout_height="match_parent"
     tools:context="com.wit.steamspares.activities.ListActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:fitsSystemWindows="true"
-        app:elevation="0dip"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        android:id="@+id/appBarLayout2"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@color/colorAccent"-->
+<!--        android:fitsSystemWindows="true"-->
+<!--        app:elevation="0dip"-->
+<!--        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
 
-        <androidx.appcompat.widget.Toolbar
-            android:text="@string/app_name"
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="SteamSpares"
-            app:titleTextColor="@color/colorPrimary">
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:text="@string/app_name"-->
+<!--            android:id="@+id/toolbar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:title="SteamSpares"-->
+<!--            app:titleTextColor="@color/colorPrimary">-->
 
-<!--            <Spinner-->
-<!--                android:id="@+id/status_spinner"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                >-->
+<!--&lt;!&ndash;            <Spinner&ndash;&gt;-->
+<!--&lt;!&ndash;                android:id="@+id/status_spinner"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;                >&ndash;&gt;-->
 
-<!--            </Spinner>-->
+<!--&lt;!&ndash;            </Spinner>&ndash;&gt;-->
 
-<!--            <SearchView-->
-<!--                android:id="@+id/filter_bar"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:accessibilityPaneTitle="FILTER"-->
-<!--                >-->
+<!--&lt;!&ndash;            <SearchView&ndash;&gt;-->
+<!--&lt;!&ndash;                android:id="@+id/filter_bar"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:accessibilityPaneTitle="FILTER"&ndash;&gt;-->
+<!--&lt;!&ndash;                >&ndash;&gt;-->
 
-<!--            </SearchView>-->
+<!--&lt;!&ndash;            </SearchView>&ndash;&gt;-->
 
-        </androidx.appcompat.widget.Toolbar>
+<!--        </androidx.appcompat.widget.Toolbar>-->
 
-    </com.google.android.material.appbar.AppBarLayout>
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <FrameLayout
+        android:id="@+id/homeFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/recyclerView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:scrollbars="vertical"-->
+<!--        app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

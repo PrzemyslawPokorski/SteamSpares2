@@ -18,10 +18,9 @@ import org.jetbrains.anko.toast
 
 
 class EditActivity : AppCompatActivity(), AnkoLogger {
-    val IMAGE_REQUEST = 1
     lateinit var app: MainApp
     lateinit var spinner: Spinner
-//    var game = GameModel(appid = 0, code = "NULL", status = false)
+    lateinit var gameNames: ArrayList<String>
     var editingGameId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +37,7 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
             spinner.adapter = adapter
         }
 
-        var gameNames = ArrayList<String>()
+        gameNames = ArrayList<String>()
         app.gameMemStore.steamList.forEach{
             gameNames.add(it.name)
         }
@@ -101,16 +100,5 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
             R.id.action_cancel -> startActivityForResult<ListActivity>(0)
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            IMAGE_REQUEST -> {
-                if (data != null) {
-//                    Image no longer included
-                }
-            }
-        }
     }
 }

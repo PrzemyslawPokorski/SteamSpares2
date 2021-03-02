@@ -20,8 +20,7 @@ import org.jetbrains.anko.info
 
 
 class GameListAdapter constructor(
-    private var games: MutableList<GameModel>,
-    private val listener: GameListener
+    private var games: MutableList<GameModel>
 ) : RecyclerView.Adapter<GameListAdapter.MainHolder>(), AnkoLogger {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
@@ -35,14 +34,18 @@ class GameListAdapter constructor(
     }
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
+        //TODO: Use position instead holder.adapterPosition?
         val game = games[holder.adapterPosition]
-        holder.bind(game, listener)
+        holder.bind(game)
     }
 
     override fun getItemCount(): Int = games.size
 
     class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView), AnkoLogger{
-        fun bind(game: GameModel, listener: GameListener) {
+        /**
+         * Updates each game card view with data passed by adapter
+         */
+        fun bind(game: GameModel) {
             val color = if(game.status) R.color.used_game else R.color.unused_game
             itemView.frame.setBackgroundColor(getColor(itemView.context, color))
             itemView.tag = game

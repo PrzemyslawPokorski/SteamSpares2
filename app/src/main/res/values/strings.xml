@@ -24,4 +24,8 @@
         <item>Unused</item>
         <item>Used</item>
     </string-array>
+    <!--    Name for editing different than adding new ? How? -->
+    <string name="edit_fragment">Editing Game</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
