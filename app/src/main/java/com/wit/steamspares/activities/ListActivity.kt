@@ -54,15 +54,12 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        info { "Debug: CreateOptionsMenu" }
         when(topMenu){
             MenuType.EDIT -> {
                 menuInflater.inflate(R.menu.menu_steamspares_add, menu)
-                info { "Debug: Add menu inflated" }
             }
             MenuType.LIST -> {
                 menuInflater.inflate(R.menu.menu_steamspares_list, menu)
-                info { "Debug: List menu inflated" }
 
                 if (menu != null) {
                     filter = menu.findItem(R.id.filter_bar).actionView as SearchView
@@ -90,13 +87,9 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         when (item.itemId) {
             R.id.item_add -> {
                 navigateTo(EditGameFragment.newInstance(app.gameMemStore))
-                info("Debug: List add button clicked")
             }
             R.id.action_cancel ->{
                 supportFragmentManager.popBackStack()
-                topMenu = MenuType.LIST
-                invalidateOptionsMenu()
-                info("Debug: Edit cancel button clicked")
             }
         }
         return super.onOptionsItemSelected(item)
@@ -124,7 +117,6 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-
 //        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()).toMutableList())
         info { "Debug: Query text changed" }
         return false

@@ -2,6 +2,7 @@ package com.wit.steamspares.fragments
 
 import GameListAdapter
 import GameListener
+import android.graphics.Color
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -54,6 +55,7 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
         gameRecyclerView.adapter = adapter
         (activity as ListActivity).askForMenu(ListActivity.MenuType.LIST)
+        view?.setBackgroundColor(Color.RED)
     }
 
 
@@ -90,6 +92,42 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
         else
             expandableCard.visibility = View.GONE
     }
+
+     override fun onStart() {
+         super.onStart()
+         info { "Debug list fragment: Start" }
+     }
+
+     override fun onStop() {
+         super.onStop()
+         info { "Debug list fragment: Stop" }
+     }
+
+     override fun onPause() {
+         super.onPause()
+         info { "Debug list fragment: Pause" }
+     }
+
+     override fun onResume() {
+         super.onResume()
+         info { "Debug list fragment: Resume" }
+     }
+
+         override fun onDestroyView() {
+             super.onDestroyView()
+             info { "Debug list fragment: DestroView" }
+         }
+
+         override fun onDestroy() {
+             super.onDestroy()
+             info { "Debug list fragment: Destroy" }
+         }
+
+         override fun onDetach() {
+             super.onDetach()
+             info { "Debug list fragment: Detach" }
+         }
+
 //
 //    override fun onQueryTextSubmit(query: String?): Boolean {
 //        info { "Debug: Query submitted" }
