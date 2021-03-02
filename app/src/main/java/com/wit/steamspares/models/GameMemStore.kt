@@ -1,28 +1,48 @@
 package com.wit.steamspares.models
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.google.gson.reflect.TypeToken
 import com.wit.steamspares.helpers.jsonHelper
 import com.wit.steamspares.model.SteamAppModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.info
-import kotlin.concurrent.thread
 
-class GameMemStore(val context : Context) : AnkoLogger {
+class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
     val GAMES_FILE = "steamspares.json"
     val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
     val steamAppType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
     val STEAMAPP_FILE = "steamappids.json"
     var games = ArrayList<GameModel>()
+    var gamesLD: MutableLiveData<List<GameModel>>? = null
     var steamList = ArrayList<SteamAppModel>()
     lateinit var jsonHelper : jsonHelper
 
-    fun findAll(): List<GameModel> {
+//    fun findAll(): List<GameModel> {
+//        gamesLD = MutableLiveData<ArrayList<GameModel>>()
+//        if(steamList.count() == 0){
+//            runBlocking {
+//                jsonHelper = jsonHelper()
+//                if (jsonHelper.fileExists(STEAMAPP_FILE, context) && jsonHelper.lastFileUpdate(STEAMAPP_FILE, context) < 60){
+//                    steamList = jsonHelper.loadIdsFromJson(context)
+//                }
+//                else{
+//                    steamList = jsonHelper.downloadSteamAppList() as ArrayList<SteamAppModel>
+//                    jsonHelper.saveIdsToJson(steamList, context)
+//                }
+//            }
+//        }
+//
+//        if(games.count() == 0 && jsonHelper.fileExists(GAMES_FILE, context))
+//            games = jsonHelper.loadGamesFromJson(context)
+//
+//        return games
+//    }
+
+    fun findAll(): MutableLiveData<List<GameModel>>? {
         if(steamList.count() == 0){
             runBlocking {
                 jsonHelper = jsonHelper()
@@ -36,11 +56,14 @@ class GameMemStore(val context : Context) : AnkoLogger {
             }
         }
 
-        if(games.count() == 0 && jsonHelper.fileExists(GAMES_FILE, context))
-            games = jsonHelper.loadGamesFromJson(context)
+        if(gamesLD == null && jsonHelper.fileExists(GAMES_FILE, context)){
+            gamesLD = MutableLiveData<List<GameModel>>()
+            gamesLD!!.value = jsonHelper.loadGamesFromJson(context)
+        }
 
-        return games
+        return gamesLD
     }
+
 
     fun getUsed(keyUsed : Boolean = true) : List<GameModel>{
         var (used, unused) = games.partition { it.status }
