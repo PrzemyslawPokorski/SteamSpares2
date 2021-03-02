@@ -7,9 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
-import androidx.core.graphics.toColor
 import androidx.recyclerview.widget.RecyclerView
 import com.wit.steamspares.R
 import com.wit.steamspares.models.GameModel
@@ -47,7 +45,7 @@ class GameListAdapter constructor(
          */
         fun bind(game: GameModel) {
             val color = if(game.status) R.color.used_game else R.color.unused_game
-            itemView.frame.setBackgroundColor(getColor(itemView.context, color))
+            itemView.gameCardFrame.setBackgroundColor(getColor(itemView.context, color))
             itemView.tag = game
             itemView.gameTitle.text = game.name
             itemView.notes.text = game.notes

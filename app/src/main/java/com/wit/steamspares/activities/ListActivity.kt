@@ -13,7 +13,6 @@ import android.widget.SearchView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.ListFragment
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.GameListFragment
 import com.wit.steamspares.main.MainApp
@@ -22,7 +21,6 @@ import kotlinx.android.synthetic.main.activity_game_list.*
 import kotlinx.android.synthetic.main.card_game.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivityForResult
 
 class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
@@ -38,17 +36,14 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         setContentView(R.layout.activity_game_list)
         app = application as MainApp
 
-//        toolbar.title = title
-//        setSupportActionBar(toolbar)
-//        supportActionBar?.setDisplayShowTitleEnabled(true)
-
-//        val layoutManager = LinearLayoutManager(this)
-//        gameRecyclerView.layoutManager = layoutManager
-//        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.findAll().toMutableList())
+        toolbar.title = title
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
 
         fragmentTransaction = supportFragmentManager.beginTransaction()
-        val fragment = GameListFragment.newInstance(app)
-        fragmentTransaction.replace(R.id.homeFrame, fragment).commit()
+        val unusedGamesAdapter = GameListAdapter(app.gameMemStore.getUsed(false).toMutableList())
+        val fragment = GameListFragment.newInstance(unusedGamesAdapter)
+        fragmentTransaction.replace(R.id.mainAppFrame, fragment).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

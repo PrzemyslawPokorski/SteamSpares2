@@ -62,8 +62,6 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
             editing = true
         }
 
-        info("Debug: Placemark activity started")
-
         btnAdd.setOnClickListener(){
             var name = gameTitle.text.toString().trim()
             var code = gameCode.text.toString().trim()
@@ -97,7 +95,10 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_cancel -> startActivityForResult<ListActivity>(0)
+            R.id.action_cancel -> {
+                info {"Debug: Pressed cancel"}
+                startActivityForResult<ListActivity>(0)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

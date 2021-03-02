@@ -11,6 +11,7 @@ import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wit.steamspares.R
 import com.wit.steamspares.main.MainApp
+import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.card_game.*
 import kotlinx.android.synthetic.main.fragment_game_list.*
@@ -27,15 +28,15 @@ private const val ARG_PARAM2 = "param2"
  * Use the [GameListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class GameListFragment : Fragment(), GameListener, AnkoLogger,
-    SearchView.OnQueryTextListener {
+class GameListFragment : Fragment(), GameListener, AnkoLogger
+     {
     // TODO: Rename and change types of parameters
-    private lateinit var app: MainApp
-    private var param2: String? = null
+    private lateinit var adapter: GameListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+//            adapter = it.get("ADP") as GameListAdapter
         }
     }
 
@@ -49,34 +50,11 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger,
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        info { "Debug: ${gameRecyclerView} "}
+        info { "Debug: onActivityCreated fragment "}
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
-        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.findAll().toMutableList())
+        gameRecyclerView.adapter = adapter
     }
 
-
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.menu_steamspares_list, menu)
-//        if (menu != null) {
-//            filter = menu.findItem(R.id.filter_bar).actionView as SearchView
-//            filter.setOnQueryTextListener(this)
-//
-//            spinner = menu.findItem(R.id.status_spinner).actionView as Spinner
-//            supportActionBar?.let {
-//                ArrayAdapter.createFromResource(
-//                    it.themedContext, R.array.status_options, android.R.layout.simple_spinner_item
-//                ).also { adapter ->
-//                    adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-//                    spinner.adapter = adapter
-//                    spinner.onItemSelectedListener = this
-//                    spinner.setSelection(1)
-//                }
-//            }
-//        }
-//
-//
-//        return super.onCreateOptionsMenu(menu)
-//    }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         info { "Debug: Context item clicked: ${item.toString()}" }
@@ -101,10 +79,6 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger,
         return super.onContextItemSelected(item)
     }
 
-    fun filter(){
-
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         info("Debug: List activity add button clicked")
         when (item.itemId) {
@@ -123,18 +97,18 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger,
         else
             expandableCard.visibility = View.GONE
     }
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        info { "Debug: Query submitted" }
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean {
-
-        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()).toMutableList())
-        info { "Debug: Query text changed" }
-        return false
-    }
+//
+//    override fun onQueryTextSubmit(query: String?): Boolean {
+//        info { "Debug: Query submitted" }
+//        return false
+//    }
+//
+//    override fun onQueryTextChange(newText: String?): Boolean {
+//
+////        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()).toMutableList())
+//        info { "Debug: Query text changed" }
+//        return false
+//    }
 
 //    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 //        val status = spinner.selectedItem.toString()
@@ -159,15 +133,17 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger,
          * @param param2 Parameter 2.
          * @return A new instance of fragment GameListFragment.
          */
+        private val adapter : GameListAdapter? = null
+
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(app: MainApp) =
+        fun newInstance(adapter: GameListAdapter) =
             GameListFragment().apply {
                 arguments = Bundle().apply {
 
                 }
                 //TODO: Is this ok?
-                this.app = app
+                this.adapter = adapter
             }
     }
 }
