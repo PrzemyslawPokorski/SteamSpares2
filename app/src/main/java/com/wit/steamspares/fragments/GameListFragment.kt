@@ -8,6 +8,7 @@ import android.transition.TransitionManager
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wit.steamspares.R
 import com.wit.steamspares.activities.ListActivity
@@ -33,11 +34,19 @@ class GameListFragment : Fragment(), AnkoLogger
      {
     private lateinit var adapter: GameListAdapter
     private lateinit var gameMemStore: GameMemStore
+    private var gameList = ArrayList<GameModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
+
+        gameMemStore.gamesLD!!.observe(this, Observer {
+            info { "Debug: Observer fired" }
+            gameList.clear()
+            gameList.addAll(it)
+            adapter.notifyDataSetChanged()
+        })
     }
 
     override fun onCreateView(
@@ -98,7 +107,8 @@ class GameListFragment : Fragment(), AnkoLogger
                 }
                 //TODO: Is this ok?
                 this.gameMemStore = memStore
-                this.adapter = GameListAdapter(memStore.getUsed(usedStatus).toMutableList())
+//                this.adapter = GameListAdapter(memStore.getUsed(usedStatus).toMutableList())
+                this.adapter = GameListAdapter(gameList)
             }
     }
 }
