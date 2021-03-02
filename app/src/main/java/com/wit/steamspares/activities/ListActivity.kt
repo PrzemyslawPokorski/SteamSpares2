@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
+import com.wit.steamspares.helpers.UIListener
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game_list.*
@@ -24,8 +25,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.startActivityForResult
 
-class ListActivity : AppCompatActivity(), AnkoLogger,
-    SearchView.OnQueryTextListener, AdapterView.OnItemSelectedListener {
+class ListActivity : AppCompatActivity(), AnkoLogger{
     enum class MenuType{
         LIST, EDIT
     }
@@ -35,6 +35,8 @@ class ListActivity : AppCompatActivity(), AnkoLogger,
     lateinit var filter : SearchView
     lateinit var fragmentTransaction : FragmentTransaction
     lateinit var topMenu : MenuType
+
+    val listenerHelper = UIListener()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +64,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger,
 
                 if (menu != null) {
                     filter = menu.findItem(R.id.filter_bar).actionView as SearchView
-                    filter.setOnQueryTextListener(this)
+                    filter.setOnQueryTextListener(listenerHelper)
 
                     spinner = menu.findItem(R.id.status_spinner).actionView as Spinner
                     supportActionBar?.let {
@@ -71,7 +73,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger,
                         ).also { adapter ->
                             adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
                             spinner.adapter = adapter
-                            spinner.onItemSelectedListener = this
+                            spinner.onItemSelectedListener = listenerHelper
                             spinner.setSelection(1)
                         }
                     }
@@ -94,37 +96,6 @@ class ListActivity : AppCompatActivity(), AnkoLogger,
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        gameRecyclerView.adapter?.notifyDataSetChanged()
-        refreshView()
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        info { "Debug: Query submitted" }
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean {
-//        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()).toMutableList())
-        info { "Debug: Query text changed" }
-        return false
-    }
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val status = spinner.selectedItem.toString()
-        refreshView(status)
-    }
-
-    fun refreshView(status: String = spinner.selectedItem.toString()){
-        info { "Debug: Refreshing" }
-        when (status){
-//            "All" -> gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString()).toMutableList())
-//            "Used" -> gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true).toMutableList())
-//            "Unused" -> gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), false).toMutableList())
-        }
-    }
-
     fun navigateTo(fragment: Fragment, addToStack: Boolean = true) {
         val ft = supportFragmentManager.beginTransaction()
             .replace(R.id.mainAppFrame, fragment)
@@ -137,9 +108,5 @@ class ListActivity : AppCompatActivity(), AnkoLogger,
         topMenu = menuType
         info { "Debug: Navigate asked for menu $menuType" }
         invalidateOptionsMenu()
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-//        TODO("Not yet implemented")
     }
 }
