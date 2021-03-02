@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import com.wit.steamspares.R
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameModel
@@ -21,9 +22,11 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
     lateinit var app: MainApp
     lateinit var spinner: Spinner
     lateinit var gameNames: ArrayList<String>
+    lateinit var fragmentTransaction : FragmentTransaction
     var editingGameId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        info { "Debug: Running edit activity onCreate" }
         var editing = false
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -53,39 +56,40 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
         setSupportActionBar(toolbarAdd)
 
         if (intent.hasExtra("game_edit")) {
-            val gameToEdit = intent.extras?.getParcelable<GameModel>("game_edit")!!
-            gameTitle.setText(gameToEdit.name)
-            gameCode.setText(gameToEdit.code)
-            btnAdd.setText(R.string.button_saveGame)
-            spinner.setSelection(if(gameToEdit.status) 1 else 0)
-            editingGameId = gameToEdit.id
-            editing = true
+//            val gameToEdit = intent.extras?.getParcelable<GameModel>("game_edit")!!
+//            gameTitle.setText(gameToEdit.name)
+//            gameCode.setText(gameToEdit.code)
+//            btnAdd.setText(R.string.button_saveGame)
+//            spinner.setSelection(if(gameToEdit.status) 1 else 0)
+//            editingGameId = gameToEdit.id
+//            editing = true
+
         }
 
-        btnAdd.setOnClickListener(){
-            var name = gameTitle.text.toString().trim()
-            var code = gameCode.text.toString().trim()
-            var status = spinner.selectedItem.toString().equals("Used", ignoreCase = true)
-            var notes = gameNotes.text.toString().trim()
-            val keycodePattern = """^[\w\d]{5}(-[\w\d]{5}){2}((-[\w\d]{5}){2})?${'$'}""".toRegex()
-
-            if(code.isNotEmpty() && code.matches(keycodePattern)) {
-                if (name.isNotEmpty() && code.isNotEmpty()) {
-                    if (!editing)
-                        app.gameMemStore.create(name, code, status, notes)
-                    else
-                        app.gameMemStore.update(editingGameId, name, code, status, notes)
-
-                    setResult(AppCompatActivity.RESULT_OK)
-
-                    finish()
-                } else {
-                    toast(R.string.empty_name_hint)
-                }
-            }
-            else
-                toast(R.string.bad_code_hint)
-        }
+//        btnAdd.setOnClickListener(){
+//            var name = gameTitle.text.toString().trim()
+//            var code = gameCode.text.toString().trim()
+//            var status = spinner.selectedItem.toString().equals("Used", ignoreCase = true)
+//            var notes = gameNotes.text.toString().trim()
+//            val keycodePattern = """^[\w\d]{5}(-[\w\d]{5}){2}((-[\w\d]{5}){2})?${'$'}""".toRegex()
+//
+//            if(code.isNotEmpty() && code.matches(keycodePattern)) {
+//                if (name.isNotEmpty() && code.isNotEmpty()) {
+//                    if (!editing)
+//                        app.gameMemStore.create(name, code, status, notes)
+//                    else
+//                        app.gameMemStore.update(editingGameId, name, code, status, notes)
+//
+//                    setResult(AppCompatActivity.RESULT_OK)
+//
+//                    finish()
+//                } else {
+//                    toast(R.string.empty_name_hint)
+//                }
+//            }
+//            else
+//                toast(R.string.bad_code_hint)
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

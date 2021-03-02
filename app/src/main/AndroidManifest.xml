@@ -11,13 +11,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.wit.steamspares.activities.ListActivity">
+            android:name="com.wit.steamspares.activities.ListActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.wit.steamspares.activities.EditActivity">
+        <activity
+            android:name="com.wit.steamspares.activities.EditActivity"
+            android:windowSoftInputMode="adjustResize">
 
         </activity>
     </application>

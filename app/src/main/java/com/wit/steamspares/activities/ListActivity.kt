@@ -12,8 +12,10 @@ import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.wit.steamspares.R
+import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameModel
@@ -41,9 +43,9 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
         fragmentTransaction = supportFragmentManager.beginTransaction()
+
         val unusedGamesAdapter = GameListAdapter(app.gameMemStore.getUsed(false).toMutableList())
-        val fragment = GameListFragment.newInstance(unusedGamesAdapter)
-        fragmentTransaction.replace(R.id.mainAppFrame, fragment).commit()
+        navigateTo(GameListFragment.newInstance(unusedGamesAdapter))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -69,37 +71,10 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-//        info { "Debug: Context item clicked: ${item.toString()}" }
-//        val game = gameRecyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
-//        when(item.toString()){
-//            getString(R.string.edit) -> {
-//                startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
-//            }
-//            getString(R.string.delete) ->{
-//                app.gameMemStore.delete(game)
-//                refreshView()
-//                gameRecyclerView.adapter?.notifyItemRemoved(item.groupId)
-//                info { "Debug: ${app.gameMemStore.games.count()}" }
-//            }
-//            getString(R.string.status_swap) -> {
-//                game.status = !game.status
-//                app.gameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
-//                refreshView()
-//                //Had to refresh view manually as well, since notifying the change didn't
-//            }
-//        }
-        return super.onContextItemSelected(item)
-    }
-
-    fun filter(){
-
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         info("Debug: List activity add button clicked")
         when (item.itemId) {
-            R.id.item_add -> startActivityForResult<EditActivity>(0)
+            R.id.item_add -> navigateTo(EditGameFragment.newInstance(app.gameMemStore))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -144,6 +119,13 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
 //            "Used" -> gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true).toMutableList())
 //            "Unused" -> gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), false).toMutableList())
         }
+    }
+
+    fun navigateTo(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.mainAppFrame, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

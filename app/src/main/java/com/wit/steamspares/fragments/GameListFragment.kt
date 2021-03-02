@@ -50,7 +50,7 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        info { "Debug: onActivityCreated fragment "}
+        info { "Debug: onActivityCreated - gamelist fragment "}
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
         gameRecyclerView.adapter = adapter
     }
@@ -58,34 +58,25 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         info { "Debug: Context item clicked: ${item.toString()}" }
-//        val game = recyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
-//        when(item.toString()){
-//            getString(R.string.edit) -> {
+        val game = gameRecyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
+        when(item.toString()){
+            getString(R.string.edit) -> {
 //                startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
-//            }
-//            getString(R.string.delete) ->{
+            }
+            getString(R.string.delete) ->{
 //                app.gameMemStore.delete(game)
 //                refreshView()
 //                recyclerView.adapter?.notifyItemRemoved(item.groupId)
 //                info { "Debug: ${app.gameMemStore.games.count()}" }
-//            }
-//            getString(R.string.status_swap) -> {
+            }
+            getString(R.string.status_swap) -> {
 //                game.status = !game.status
 //                app.gameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
 //                refreshView()
-//                //Had to refresh view manually as well, since notifying the change didn't
-//            }
-//        }
-        return super.onContextItemSelected(item)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        info("Debug: List activity add button clicked")
-        when (item.itemId) {
-            //TODO: R.id.nav_donate -> navigateTo(DonateFragment.newInstance()) - rework for here
-//            R.id.item_add -> startActivityForResult<EditActivity>(0)
+                //Had to refresh view manually as well, since notifying the change didn't
+            }
         }
-        return super.onOptionsItemSelected(item)
+        return super.onContextItemSelected(item)
     }
 
     override fun onGameClick(game: GameModel) {

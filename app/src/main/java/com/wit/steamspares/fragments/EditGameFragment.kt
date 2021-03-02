@@ -5,9 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.wit.steamspares.R
 import com.wit.steamspares.main.MainApp
+import com.wit.steamspares.models.GameMemStore
+import com.wit.steamspares.models.GameModel
+import kotlinx.android.synthetic.main.activity_game.*
+import kotlinx.android.synthetic.main.fragment_game_list.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
+import org.jetbrains.anko.toast
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -19,21 +29,26 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EditGameFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EditGameFragment : Fragment() {
+class EditGameFragment : Fragment(), AnkoLogger {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var gameToEdit: GameModel? = null
+    private var editing : Boolean = false
 
-    lateinit var app: MainApp
+    lateinit var memstore: GameMemStore
     lateinit var spinner: Spinner
+    lateinit var gameNames: ArrayList<String>
     var editingGameId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        arguments?.let {
-//            param1 = it.getString(ARG_PARAM1)
-//            param2 = it.getString(ARG_PARAM2)
-//        }
+        arguments?.let {
+        }
+
+        gameNames = ArrayList<String>()
+        memstore.steamList.forEach{
+            gameNames.add(it.name)
+        }
+        gameNames.sort()
     }
 
     override fun onCreateView(
@@ -43,6 +58,55 @@ class EditGameFragment : Fragment() {
         // Inflate the layout for this fragment
         activity?.title = getString(R.string.edit_fragment)
         return inflater.inflate(R.layout.fragment_edit_game, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        info { "Debug: onActivityCreated - edit fragment "}
+
+        spinner = gameStatus
+        context?.let {
+            ArrayAdapter.createFromResource(
+                it, R.array.new_status_options, android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+                spinner.adapter = adapter
+            }
+        }
+
+        if (gameToEdit != null) {
+            gameTitle.setText(gameToEdit!!.name)
+            gameCode.setText(gameToEdit!!.code)
+            btnAdd.setText(R.string.button_saveGame)
+            spinner.setSelection(if(gameToEdit!!.status) 1 else 0)
+            editingGameId = gameToEdit!!.id
+            editing = true
+        }
+
+        btnAdd.setOnClickListener(){
+            var name = gameTitle.text.toString().trim()
+            var code = gameCode.text.toString().trim()
+            var status = spinner.selectedItem.toString().equals("Used", ignoreCase = true)
+            var notes = gameNotes.text.toString().trim()
+            val keycodePattern = """^[\w\d]{5}(-[\w\d]{5}){2}((-[\w\d]{5}){2})?${'$'}""".toRegex()
+
+            if(code.isNotEmpty() && code.matches(keycodePattern)) {
+                if (name.isNotEmpty() && code.isNotEmpty()) {
+                    if (!editing)
+                        memstore.create(name, code, status, notes)
+                    else
+                        memstore.update(editingGameId, name, code, status, notes)
+
+                    activity?.setResult(AppCompatActivity.RESULT_OK)
+
+                    activity?.finish()
+                } else {
+                    activity?.toast(R.string.empty_name_hint)
+                }
+            }
+            else
+                activity?.toast(R.string.bad_code_hint)
+        }
     }
 
     companion object {
@@ -56,10 +120,12 @@ class EditGameFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(gameMemStore: GameMemStore, game : GameModel? = null) =
             EditGameFragment().apply {
                 arguments = Bundle().apply {
                 }
+                this.memstore = gameMemStore
+                this.gameToEdit = game
             }
     }
 }
