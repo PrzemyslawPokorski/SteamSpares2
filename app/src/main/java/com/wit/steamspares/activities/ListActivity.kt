@@ -50,41 +50,48 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         fragmentTransaction = supportFragmentManager.beginTransaction()
 
         val unusedGamesAdapter = GameListAdapter(app.gameMemStore.getUsed(false).toMutableList())
-        navigateTo(GameListFragment.newInstance(app.gameMemStore, false))
+        navigateTo(GameListFragment.newInstance(app.gameMemStore, false), addToStack = false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         info { "Debug: CreateOptionsMenu" }
         when(topMenu){
             MenuType.EDIT -> menuInflater.inflate(R.menu.menu_steamspares_add, menu)
-            MenuType.LIST -> menuInflater.inflate(R.menu.menu_steamspares_list, menu)
-        }
+            MenuType.LIST -> {
+                menuInflater.inflate(R.menu.menu_steamspares_list, menu)
 
-        if (menu != null) {
-            filter = menu.findItem(R.id.filter_bar).actionView as SearchView
-            filter.setOnQueryTextListener(this)
+                if (menu != null) {
+                    filter = menu.findItem(R.id.filter_bar).actionView as SearchView
+                    filter.setOnQueryTextListener(this)
 
-            spinner = menu.findItem(R.id.status_spinner).actionView as Spinner
-            supportActionBar?.let {
-                ArrayAdapter.createFromResource(
-                    it.themedContext, R.array.status_options, android.R.layout.simple_spinner_item
-                ).also { adapter ->
-                    adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-                    spinner.adapter = adapter
-                    spinner.onItemSelectedListener = this
-                    spinner.setSelection(1)
+                    spinner = menu.findItem(R.id.status_spinner).actionView as Spinner
+                    supportActionBar?.let {
+                        ArrayAdapter.createFromResource(
+                            it.themedContext, R.array.status_options, android.R.layout.simple_spinner_item
+                        ).also { adapter ->
+                            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+                            spinner.adapter = adapter
+                            spinner.onItemSelectedListener = this
+                            spinner.setSelection(1)
+                        }
+                    }
                 }
             }
         }
-
 
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        info("Debug: List activity add button clicked")
         when (item.itemId) {
-            R.id.item_add -> navigateTo(EditGameFragment.newInstance(app.gameMemStore), MenuType.EDIT)
+            R.id.item_add -> {
+                navigateTo(EditGameFragment.newInstance(app.gameMemStore), MenuType.EDIT)
+                info("Debug: List add button clicked")
+            }
+            R.id.action_cancel ->{
+                supportFragmentManager.popBackStack()
+                info("Debug: Edit cancel button clicked")
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -131,13 +138,16 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         }
     }
 
-    fun navigateTo(fragment: Fragment, fragmentType : MenuType = MenuType.LIST) {
-        supportFragmentManager.beginTransaction()
+    fun navigateTo(fragment: Fragment, fragmentType : MenuType = MenuType.LIST,
+                   addToStack: Boolean = true) {
+        val ft = supportFragmentManager.beginTransaction()
             .replace(R.id.mainAppFrame, fragment)
-            .addToBackStack(null)
-            .commit()
+        if(addToStack)
+            ft.addToBackStack(null)
+        ft.commit()
 
         //TODO: Change top bar menu as required
+        topMenu = fragmentType
         invalidateOptionsMenu()
     }
 
