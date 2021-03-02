@@ -12,14 +12,14 @@ import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.squareup.picasso.Picasso
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.ListFragment
 import com.wit.steamspares.R
+import com.wit.steamspares.fragments.GameListFragment
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game_list.*
 import kotlinx.android.synthetic.main.card_game.*
-import kotlinx.android.synthetic.main.card_game.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
@@ -31,19 +31,24 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     lateinit var app: MainApp
     lateinit var spinner : Spinner
     lateinit var filter : SearchView
+    lateinit var fragmentTransaction : FragmentTransaction
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_list)
         app = application as MainApp
 
-        toolbar.title = title
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
+//        toolbar.title = title
+//        setSupportActionBar(toolbar)
+//        supportActionBar?.setDisplayShowTitleEnabled(true)
 
-        val layoutManager = LinearLayoutManager(this)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = GameListAdapter(app.gameMemStore.findAll().toMutableList(), this)
+//        val layoutManager = LinearLayoutManager(this)
+//        gameRecyclerView.layoutManager = layoutManager
+//        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.findAll().toMutableList())
+
+        fragmentTransaction = supportFragmentManager.beginTransaction()
+        val fragment = GameListFragment.newInstance(app)
+        fragmentTransaction.replace(R.id.homeFrame, fragment).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -70,25 +75,25 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        info { "Debug: Context item clicked: ${item.toString()}" }
-        val game = recyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
-        when(item.toString()){
-            getString(R.string.edit) -> {
-                startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
-            }
-            getString(R.string.delete) ->{
-                app.gameMemStore.delete(game)
-                refreshView()
-                recyclerView.adapter?.notifyItemRemoved(item.groupId)
-                info { "Debug: ${app.gameMemStore.games.count()}" }
-            }
-            getString(R.string.status_swap) -> {
-                game.status = !game.status
-                app.gameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
-                refreshView()
-                //Had to refresh view manually as well, since notifying the change didn't
-            }
-        }
+//        info { "Debug: Context item clicked: ${item.toString()}" }
+//        val game = gameRecyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
+//        when(item.toString()){
+//            getString(R.string.edit) -> {
+//                startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
+//            }
+//            getString(R.string.delete) ->{
+//                app.gameMemStore.delete(game)
+//                refreshView()
+//                gameRecyclerView.adapter?.notifyItemRemoved(item.groupId)
+//                info { "Debug: ${app.gameMemStore.games.count()}" }
+//            }
+//            getString(R.string.status_swap) -> {
+//                game.status = !game.status
+//                app.gameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
+//                refreshView()
+//                //Had to refresh view manually as well, since notifying the change didn't
+//            }
+//        }
         return super.onContextItemSelected(item)
     }
 
@@ -115,7 +120,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        recyclerView.adapter?.notifyDataSetChanged()
+//        gameRecyclerView.adapter?.notifyDataSetChanged()
         refreshView()
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -127,7 +132,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
 
     override fun onQueryTextChange(newText: String?): Boolean {
 
-        recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()).toMutableList(), this)
+//        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(newText.toString()).toMutableList())
         info { "Debug: Query text changed" }
         return false
     }
@@ -140,9 +145,9 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     fun refreshView(status: String = spinner.selectedItem.toString()){
         info { "Debug: Refreshing" }
         when (status){
-            "All" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString()).toMutableList(), this)
-            "Used" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true).toMutableList(), this)
-            "Unused" -> recyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), false).toMutableList(), this)
+//            "All" -> gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString()).toMutableList())
+//            "Used" -> gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), true).toMutableList())
+//            "Unused" -> gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.getFiltered(filter.query.toString(), false).toMutableList())
         }
     }
 

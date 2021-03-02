@@ -36,7 +36,6 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-
         }
     }
 
@@ -44,12 +43,15 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger,
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val layoutManager = LinearLayoutManager(activity?.applicationContext)
-        info { "Debug: ${gameRecyclerView} "}
-        gameRecyclerView.layoutManager = layoutManager
-        gameRecyclerView.adapter = GameListAdapter(app!!.gameMemStore.findAll().toMutableList())
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game_list, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        info { "Debug: ${gameRecyclerView} "}
+        gameRecyclerView.layoutManager = LinearLayoutManager(context)
+        gameRecyclerView.adapter = GameListAdapter(app.gameMemStore.findAll().toMutableList())
     }
 
 
