@@ -50,7 +50,6 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
 
         fragmentTransaction = supportFragmentManager.beginTransaction()
 
-        val unusedGamesAdapter = GameListAdapter(app.gameMemStore.getUsed(false).toMutableList())
         navigateTo(GameListFragment.newInstance(app.gameMemStore, false), addToStack = false)
     }
 

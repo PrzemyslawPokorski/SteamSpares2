@@ -57,6 +57,11 @@ class GameListFragment : Fragment(), AnkoLogger
         return inflater.inflate(R.layout.fragment_game_list, container, false)
     }
 
+         override fun onResume() {
+             super.onResume()
+             info { "Debug: List fragment Resume" }
+         }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         info { "Debug: onActivityCreated - gamelist fragment "}
@@ -74,6 +79,7 @@ class GameListFragment : Fragment(), AnkoLogger
                 (activity as ListActivity).navigateTo(EditGameFragment.newInstance(gameMemStore, game))
 //                startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
             }
+            //TODO: Restore functionality
             getString(R.string.delete) ->{
 //                app.gameMemStore.delete(game)
 //                refreshView()

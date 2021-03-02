@@ -16,8 +16,9 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
     val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
     val steamAppType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
     val STEAMAPP_FILE = "steamappids.json"
-    var games = ArrayList<GameModel>()
-    var gamesLD: MutableLiveData<List<GameModel>>? = null
+//    var games = ArrayList<GameModel>()
+//    var gamesLD: MutableLiveData<ArrayList<GameModel>>? = null
+    var gamesLD = MutableLiveData<ArrayList<GameModel>>()
     var steamList = ArrayList<SteamAppModel>()
     lateinit var jsonHelper : jsonHelper
 
@@ -42,7 +43,7 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
 //        return games
 //    }
 
-    fun findAll(): MutableLiveData<List<GameModel>>? {
+    fun findAll(): MutableLiveData<ArrayList<GameModel>>? {
         if(steamList.count() == 0){
             runBlocking {
                 jsonHelper = jsonHelper()
@@ -56,8 +57,10 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
             }
         }
 
-        if(gamesLD == null && jsonHelper.fileExists(GAMES_FILE, context)){
-            gamesLD = MutableLiveData<List<GameModel>>()
+        //TODO: Make sure this works with null safe etc
+        info { "Debug: ${gamesLD}" }
+        if(gamesLD.value == null && jsonHelper.fileExists(GAMES_FILE, context)){
+            gamesLD = MutableLiveData<ArrayList<GameModel>>()
             gamesLD!!.value = jsonHelper.loadGamesFromJson(context)
         }
 
@@ -66,18 +69,21 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
 
 
     fun getUsed(keyUsed : Boolean = true) : List<GameModel>{
-        var (used, unused) = games.partition { it.status }
+        var (used, unused) = gamesLD.value!!.partition { it.status }
         return if(keyUsed) used else unused
     }
 
     fun create(name: String, code : String, status : Boolean, notes: String) {
-        games.add(GameModel(findSteamId(name), name, code, status, notes))
-        jsonHelper.saveGamesToJson(games, context)
+        val newVal = gamesLD.value?.apply { add(GameModel(findSteamId(name), name, code, status, notes)) }
+        gamesLD.value = newVal
+
+        jsonHelper.saveGamesToJson(gamesLD.value!!, context)
         logAll()
     }
 
     fun update(id : Int, name: String, code : String, status : Boolean, notes: String?) {
-        var foundGame: GameModel? = games.find { p -> p.id == id }
+        //TODO: Something funky - used status updates copy the game and replace an existing copy of another game (only one used at time..)
+        var foundGame: GameModel? = gamesLD.value!!.find { p -> p.id == id }
         if (foundGame != null) {
             foundGame.id = code.hashCode()
             foundGame.name = name
@@ -87,28 +93,34 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
             foundGame.appid = findSteamId(name)
             foundGame.url = getGameUrl(foundGame.appid)
             foundGame.bannerUrl = getImageUrl(foundGame.appid)
-            jsonHelper.saveGamesToJson(games, context)
+            jsonHelper.saveGamesToJson(gamesLD.value!!, context)
             logAll()
         }
         else
             info { "Superdebug: Game $id, $name not found" }
+
+        //Update the value for observers
+        gamesLD.value = gamesLD.value
     }
 
     fun delete(game: GameModel){
-        games.remove(game)
-        jsonHelper.saveGamesToJson(games, context)
+        val newVal = gamesLD.value?.apply { remove(game) }
+
+        //Update the value for observers
+        gamesLD.value = newVal
+        jsonHelper.saveGamesToJson(gamesLD.value!!, context)
     }
 
     fun getFiltered(query : String = "") : List<GameModel>{
-        return games.filter { it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true }
+        return gamesLD.value!!.filter { it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true }
     }
 
     fun getFiltered(query : String = "", usedStatus: Boolean) : List<GameModel>{
-        return games.filter { (it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true) && it.status == usedStatus }
+        return gamesLD.value!!.filter { (it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true) && it.status == usedStatus }
     }
 
     fun logAll() {
-        games.forEach { info("Debug: ${it}") }
+        gamesLD.value!!.forEach { info("Debug: ${it}") }
         info { "------------------------------------------------------------------------------------------------------------------------------------------------------" }
     }
 
