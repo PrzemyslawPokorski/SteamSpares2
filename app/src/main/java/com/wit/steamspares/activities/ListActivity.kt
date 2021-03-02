@@ -27,16 +27,21 @@ import org.jetbrains.anko.startActivityForResult
 
 class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     SearchView.OnQueryTextListener, AdapterView.OnItemSelectedListener {
+    enum class MenuType{
+        LIST, EDIT
+    }
 
     lateinit var app: MainApp
     lateinit var spinner : Spinner
     lateinit var filter : SearchView
     lateinit var fragmentTransaction : FragmentTransaction
+    lateinit var topMenu : MenuType
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_list)
         app = application as MainApp
+        topMenu = MenuType.LIST
 
         toolbar.title = title
         setSupportActionBar(toolbar)
@@ -45,11 +50,16 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         fragmentTransaction = supportFragmentManager.beginTransaction()
 
         val unusedGamesAdapter = GameListAdapter(app.gameMemStore.getUsed(false).toMutableList())
-        navigateTo(GameListFragment.newInstance(unusedGamesAdapter))
+        navigateTo(GameListFragment.newInstance(app.gameMemStore, false))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_steamspares_list, menu)
+        info { "Debug: CreateOptionsMenu" }
+        when(topMenu){
+            MenuType.EDIT -> menuInflater.inflate(R.menu.menu_steamspares_add, menu)
+            MenuType.LIST -> menuInflater.inflate(R.menu.menu_steamspares_list, menu)
+        }
+
         if (menu != null) {
             filter = menu.findItem(R.id.filter_bar).actionView as SearchView
             filter.setOnQueryTextListener(this)
@@ -74,7 +84,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         info("Debug: List activity add button clicked")
         when (item.itemId) {
-            R.id.item_add -> navigateTo(EditGameFragment.newInstance(app.gameMemStore))
+            R.id.item_add -> navigateTo(EditGameFragment.newInstance(app.gameMemStore), MenuType.EDIT)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -121,11 +131,14 @@ class ListActivity : AppCompatActivity(), AnkoLogger, GameListener,
         }
     }
 
-    fun navigateTo(fragment: Fragment) {
+    fun navigateTo(fragment: Fragment, fragmentType : MenuType = MenuType.LIST) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.mainAppFrame, fragment)
             .addToBackStack(null)
             .commit()
+
+        //TODO: Change top bar menu as required
+        invalidateOptionsMenu()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wit.steamspares.R
+import com.wit.steamspares.activities.ListActivity
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
@@ -30,13 +31,12 @@ private const val ARG_PARAM2 = "param2"
  */
 class GameListFragment : Fragment(), GameListener, AnkoLogger
      {
-    // TODO: Rename and change types of parameters
     private lateinit var adapter: GameListAdapter
+    private lateinit var gameMemStore: GameMemStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-//            adapter = it.get("ADP") as GameListAdapter
         }
     }
 
@@ -61,6 +61,7 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
         val game = gameRecyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
         when(item.toString()){
             getString(R.string.edit) -> {
+                (activity as ListActivity).navigateTo(EditGameFragment.newInstance(gameMemStore, game))
 //                startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
             }
             getString(R.string.delete) ->{
@@ -124,17 +125,17 @@ class GameListFragment : Fragment(), GameListener, AnkoLogger
          * @param param2 Parameter 2.
          * @return A new instance of fragment GameListFragment.
          */
-        private val adapter : GameListAdapter? = null
 
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(adapter: GameListAdapter) =
+        fun newInstance(memStore: GameMemStore, usedStatus : Boolean) =
             GameListFragment().apply {
                 arguments = Bundle().apply {
 
                 }
                 //TODO: Is this ok?
-                this.adapter = adapter
+                this.gameMemStore = memStore
+                this.adapter = GameListAdapter(memStore.getUsed(usedStatus).toMutableList())
             }
     }
 }
