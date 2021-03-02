@@ -99,9 +99,8 @@ class EditGameFragment : Fragment(), AnkoLogger {
                     else
                         memstore.update(editingGameId, name, code, status, notes)
 
-                    activity?.setResult(AppCompatActivity.RESULT_OK)
+                    fragmentManager?.popBackStack()
 
-                    activity?.finish()
                 } else {
                     activity?.toast(R.string.empty_name_hint)
                 }
