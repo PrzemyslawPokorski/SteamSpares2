@@ -1,13 +1,7 @@
 package com.wit.steamspares.activities
 
-import GameListAdapter
-import android.content.Intent
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -18,25 +12,28 @@ import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
 import com.wit.steamspares.helpers.UIListener
 import com.wit.steamspares.main.MainApp
-import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game_list.*
-import kotlinx.android.synthetic.main.card_game.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.startActivityForResult
 
-class ListActivity : AppCompatActivity(), AnkoLogger{
+class ListActivity : AppCompatActivity(), AnkoLogger, SearchView.OnQueryTextListener {
     enum class MenuType{
         LIST, EDIT
     }
 
+    enum class UsedStatus(val fragName: String, val usedStatus: Boolean){
+        USED("USED", true),
+        UNUSED("UNUSED", false)
+    }
+
     lateinit var app: MainApp
     lateinit var spinner : Spinner
-    lateinit var filter : SearchView
+    var filter : SearchView? = null
     lateinit var fragmentTransaction : FragmentTransaction
     lateinit var topMenu : MenuType
 
     val listenerHelper = UIListener()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +47,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
 
         fragmentTransaction = supportFragmentManager.beginTransaction()
 
-        navigateTo(GameListFragment.newInstance(app.gameMemStore, false), addToStack = false)
+        navigateTo(UsedStatus.UNUSED, addToStack = false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -63,19 +60,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
 
                 if (menu != null) {
                     filter = menu.findItem(R.id.filter_bar).actionView as SearchView
-                    filter.setOnQueryTextListener(listenerHelper)
-
-                    spinner = menu.findItem(R.id.status_spinner).actionView as Spinner
-                    supportActionBar?.let {
-                        ArrayAdapter.createFromResource(
-                            it.themedContext, R.array.status_options, android.R.layout.simple_spinner_item
-                        ).also { adapter ->
-                            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-                            spinner.adapter = adapter
-                            spinner.onItemSelectedListener = listenerHelper
-                            spinner.setSelection(1)
-                        }
-                    }
+                    filter?.setOnQueryTextListener(this)
                 }
             }
         }
@@ -86,6 +71,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_add -> {
+                info { "Debug: Add button clicked" }
                 navigateTo(EditGameFragment.newInstance(app.gameMemStore))
             }
             R.id.action_cancel ->{
@@ -103,9 +89,41 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
         ft.commit()
     }
 
+    fun navigateTo(status: UsedStatus? = null, addToStack: Boolean = true) {
+        if(status == null)
+            return
+        val ft : FragmentTransaction
+        var fragment = supportFragmentManager.findFragmentByTag(status.fragName)
+        if(fragment == null){
+            fragment = GameListFragment.newInstance(app.gameMemStore, status.usedStatus)
+        }
+
+        info { "Debug multifrag: Should navigate to ${status.fragName} list" }
+
+        ft = supportFragmentManager.beginTransaction()
+            .replace(R.id.mainAppFrame, fragment, status.fragName)
+
+        if(addToStack)
+            ft.addToBackStack(null)
+        ft?.commit()
+    }
+
     fun askForMenu(menuType: MenuType){
         topMenu = menuType
         info { "Debug: Navigate asked for menu $menuType" }
         invalidateOptionsMenu()
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+//        TODO("Not yet implemented")
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        if (newText != null) {
+            app.gameMemStore.updateFilter(newText)
+            return true
+        }
+        return false
     }
 }

@@ -1,7 +1,7 @@
 package com.wit.steamspares.models
 
 import android.content.Context
-import androidx.lifecycle.LiveData
+import android.widget.SearchView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.reflect.TypeToken
@@ -11,37 +11,16 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
+class GameMemStore : AnkoLogger, ViewModel() {
     val GAMES_FILE = "steamspares.json"
     val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
     val steamAppType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
     val STEAMAPP_FILE = "steamappids.json"
-//    var games = ArrayList<GameModel>()
-//    var gamesLD: MutableLiveData<ArrayList<GameModel>>? = null
     var gamesLD = MutableLiveData<ArrayList<GameModel>>()
+    val filterQuery = MutableLiveData<String>()
     var steamList = ArrayList<SteamAppModel>()
     lateinit var jsonHelper : jsonHelper
-
-//    fun findAll(): List<GameModel> {
-//        gamesLD = MutableLiveData<ArrayList<GameModel>>()
-//        if(steamList.count() == 0){
-//            runBlocking {
-//                jsonHelper = jsonHelper()
-//                if (jsonHelper.fileExists(STEAMAPP_FILE, context) && jsonHelper.lastFileUpdate(STEAMAPP_FILE, context) < 60){
-//                    steamList = jsonHelper.loadIdsFromJson(context)
-//                }
-//                else{
-//                    steamList = jsonHelper.downloadSteamAppList() as ArrayList<SteamAppModel>
-//                    jsonHelper.saveIdsToJson(steamList, context)
-//                }
-//            }
-//        }
-//
-//        if(games.count() == 0 && jsonHelper.fileExists(GAMES_FILE, context))
-//            games = jsonHelper.loadGamesFromJson(context)
-//
-//        return games
-//    }
+    lateinit var context: Context
 
     fun findAll(): MutableLiveData<ArrayList<GameModel>>? {
         if(steamList.count() == 0){
@@ -67,6 +46,9 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
         return gamesLD
     }
 
+    fun updateFilter(str: String){
+        filterQuery.value = str
+    }
 
     fun getUsed(keyUsed : Boolean = true) : List<GameModel>{
         var (used, unused) = gamesLD.value!!.partition { it.status }

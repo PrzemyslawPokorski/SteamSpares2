@@ -1,24 +1,22 @@
 package com.wit.steamspares.fragments
 
 import GameListAdapter
-import android.graphics.Color
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wit.steamspares.R
 import com.wit.steamspares.activities.ListActivity
-import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
-import kotlinx.android.synthetic.main.card_game.*
 import kotlinx.android.synthetic.main.fragment_game_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,13 +38,28 @@ class GameListFragment : Fragment(), AnkoLogger {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
+    }
 
-        gameMemStore.gamesLD!!.observe(this, Observer {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        gameMemStore.gamesLD.observe(viewLifecycleOwner, Observer {
             info { "Debug: Observer fired" }
             gameList.clear()
-            gameList.addAll(gameMemStore.getUsed(usedStatus))
+            gameList.addAll(it)
             adapter.notifyDataSetChanged()
         })
+
+//        gameMemStore.filterQuery.observe(viewLifecycleOwner, Observer {query ->
+//            info { "Debug: filter change detected" }
+//            gameList.filter {
+//                info { "Debug: Filtering to contain $query" }
+//                it.name.contains(query, ignoreCase = true) ||
+//                        it.notes?.contains(query, ignoreCase = true) ?: true
+//            }
+//            info { "Debug: Filtered list contains ${gameList.count()} elements" }
+//            adapter.notifyDataSetChanged()
+//        })
     }
 
     override fun onCreateView(
@@ -59,7 +72,7 @@ class GameListFragment : Fragment(), AnkoLogger {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        info { "Debug: onActivityCreated - gamelist fragment "}
+        info { "Debug: onActivityCreated - gamelist fragment for $usedStatus "}
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
         gameRecyclerView.adapter = adapter
         (activity as ListActivity).askForMenu(ListActivity.MenuType.LIST)
@@ -98,9 +111,9 @@ class GameListFragment : Fragment(), AnkoLogger {
                 arguments = Bundle().apply {
 
                 }
-                //TODO: Is this ok?
                 this.gameMemStore = memStore
                 this.adapter = GameListAdapter(gameList)
+                this.usedStatus = usedStatus
             }
     }
 }

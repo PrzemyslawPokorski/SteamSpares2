@@ -12,11 +12,12 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
 class MainApp : Application(), AnkoLogger {
-    val gameMemStore = GameMemStore(this)
+    val gameMemStore = GameMemStore()
 
     lateinit var steamAppStore : List<SteamAppModel>
 
     override fun onCreate() {
+        gameMemStore.context = this
         gameMemStore.findAll()
 //        gameMemStore.create(name = "Game1", code = "1111", status = false, notes = "About game1About game1About game1About game1About game1About game1About game1About game1About game1About game1About game1About game1...")
 //        gameMemStore.create(name = "Game2", code = "2222", status = false, notes = "About game2...")

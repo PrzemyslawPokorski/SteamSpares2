@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/status_spinner"
-        android:title="Status"
-        app:actionViewClass="android.widget.Spinner"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/filter_bar"
         android:titleCondensed="Filter"
         android:title="Search"
@@ -21,5 +15,5 @@
         android:id="@+id/item_add"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/menu_addGame"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>
