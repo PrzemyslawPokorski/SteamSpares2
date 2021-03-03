@@ -45,8 +45,12 @@ class GameListFragment : Fragment(), AnkoLogger {
         gameMemStore.filterQuery.observe(this, Observer {
             val query = it
             info { "Debug: Filter updated to $it" }
-            val filteredList = gameList.filter { it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true }
-//            gameList.clear()
+            val filteredList = gameMemStore.gamesLD.value!!.filter {
+                (it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true) &&
+                        it.status == this.usedStatus
+            }
+            gameList.clear()
+            gameList.addAll(filteredList)
             info { "Debug: Filtered list item count: ${filteredList.count()} vs gameList count: ${gameList.count()}" }
             adapter.notifyDataSetChanged()
         })
