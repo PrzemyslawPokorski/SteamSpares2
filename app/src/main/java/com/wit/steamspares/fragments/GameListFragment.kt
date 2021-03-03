@@ -43,13 +43,20 @@ class GameListFragment : Fragment(), AnkoLogger {
 
         //Using shared view model properly broke some things in the process - might redo slightly later
         gameMemStore.filterQuery.observe(this, Observer {
+            val query = it
             info { "Debug: Filter updated to $it" }
+            val filteredList = gameList.filter { it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true }
+//            gameList.clear()
+            info { "Debug: Filtered list item count: ${filteredList.count()} vs gameList count: ${gameList.count()}" }
+            adapter.notifyDataSetChanged()
         })
 
         gameMemStore.gamesLD!!.observe(this, Observer {
             info { "Debug: Observer fired" }
             gameList.clear()
-            gameList.addAll(gameMemStore.getUsed(usedStatus))
+            gameList.addAll(it.filter {
+                it.status == this.usedStatus
+            })
             adapter.notifyDataSetChanged()
         })
     }
@@ -106,6 +113,7 @@ class GameListFragment : Fragment(), AnkoLogger {
                 //TODO: Is this ok?
                 this.gameMemStore = memStore
                 this.adapter = GameListAdapter(gameList)
+                this.usedStatus = usedStatus
             }
     }
 }
