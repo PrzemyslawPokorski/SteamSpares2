@@ -63,7 +63,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
 
                 if (menu != null) {
                     filter = menu.findItem(R.id.filter_bar).actionView as SearchView
-                    filter.setOnQueryTextListener(listenerHelper)
+                    filter.setOnQueryTextListener(app.gameMemStore)
                 }
             }
         }

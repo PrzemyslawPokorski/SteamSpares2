@@ -1,6 +1,7 @@
 package com.wit.steamspares.models
 
 import android.content.Context
+import android.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,12 +12,14 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
+class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
+    SearchView.OnQueryTextListener {
     val GAMES_FILE = "steamspares.json"
     val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
     val steamAppType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
     val STEAMAPP_FILE = "steamappids.json"
     var gamesLD = MutableLiveData<ArrayList<GameModel>>()
+    val filterQuery = MutableLiveData<String>()
     var steamList = ArrayList<SteamAppModel>()
     lateinit var jsonHelper : jsonHelper
 
@@ -43,7 +46,6 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
 
         return gamesLD
     }
-
 
     fun getUsed(keyUsed : Boolean = true) : List<GameModel>{
         var (used, unused) = gamesLD.value!!.partition { it.status }
@@ -124,5 +126,16 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
 
     fun getImageUrl(id : Int) : String{
         return "https://cdn.cloudflare.steamstatic.com/steam/apps/${id}/header.jpg"
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+//        TODO("Not yet implemented")
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+//        TODO("Not yet implemented")
+        filterQuery.value = newText
+        return true
     }
 }

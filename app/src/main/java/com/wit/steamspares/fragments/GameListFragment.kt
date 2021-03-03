@@ -41,7 +41,10 @@ class GameListFragment : Fragment(), AnkoLogger {
         arguments?.let {
         }
 
-
+        //Using shared view model properly broke some things in the process - might redo slightly later
+        gameMemStore.filterQuery.observe(this, Observer {
+            info { "Debug: Filter updated to $it" }
+        })
 
         gameMemStore.gamesLD!!.observe(this, Observer {
             info { "Debug: Observer fired" }
