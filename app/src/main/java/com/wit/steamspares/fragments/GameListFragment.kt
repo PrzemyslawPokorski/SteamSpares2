@@ -77,20 +77,13 @@ class GameListFragment : Fragment(), AnkoLogger
         when(item.toString()){
             getString(R.string.edit) -> {
                 (activity as ListActivity).navigateTo(EditGameFragment.newInstance(gameMemStore, game))
-//                startActivityForResult(intentFor<EditActivity>().putExtra("game_edit", game), 0)
             }
-            //TODO: Restore functionality
             getString(R.string.delete) ->{
-//                app.gameMemStore.delete(game)
-//                refreshView()
-//                recyclerView.adapter?.notifyItemRemoved(item.groupId)
-//                info { "Debug: ${app.gameMemStore.games.count()}" }
+                gameMemStore.delete(game)
             }
             getString(R.string.status_swap) -> {
-//                game.status = !game.status
-//                app.gameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
-//                refreshView()
-                //Had to refresh view manually as well, since notifying the change didn't
+                game.status = !game.status
+                gameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
             }
         }
         return super.onContextItemSelected(item)

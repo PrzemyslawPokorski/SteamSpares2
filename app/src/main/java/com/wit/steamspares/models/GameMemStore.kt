@@ -82,7 +82,6 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
     }
 
     fun update(id : Int, name: String, code : String, status : Boolean, notes: String?) {
-        //TODO: Something funky - used status updates copy the game and replace an existing copy of another game (only one used at time..)
         var foundGame: GameModel? = gamesLD.value!!.find { p -> p.id == id }
         if (foundGame != null) {
             foundGame.id = code.hashCode()
