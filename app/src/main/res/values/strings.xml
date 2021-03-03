@@ -28,4 +28,8 @@
     <string name="edit_fragment">Editing Game</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_used">Used</string>
+    <string name="menu_unused">Unused</string>
+    <string name="menu_stats">Statistics</string>
+    <string name="nav_header_desc">User info when login system is a thing</string>
 </resources>

@@ -1,13 +1,7 @@
 package com.wit.steamspares.activities
 
-import GameListAdapter
-import android.content.Intent
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +12,10 @@ import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
 import com.wit.steamspares.helpers.UIListener
 import com.wit.steamspares.main.MainApp
-import com.wit.steamspares.models.GameModel
-import kotlinx.android.synthetic.main.activity_game_list.*
-import kotlinx.android.synthetic.main.card_game.*
+import kotlinx.android.synthetic.main.home.*
+import kotlinx.android.synthetic.main.app_bar.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.startActivityForResult
 
 class ListActivity : AppCompatActivity(), AnkoLogger{
     enum class MenuType{
@@ -40,7 +32,7 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game_list)
+        setContentView(R.layout.app_bar)
         app = application as MainApp
         topMenu = MenuType.LIST
 
