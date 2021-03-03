@@ -6,11 +6,11 @@
     <item android:title="Games">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_unused"
                 android:icon="@drawable/ic_baseline_check_24"
                 android:title="@string/menu_unused" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_used"
                 android:icon="@drawable/ic_baseline_close_24"
                 android:title="@string/menu_used" />
         </menu>

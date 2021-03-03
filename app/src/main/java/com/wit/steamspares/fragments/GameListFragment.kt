@@ -59,6 +59,16 @@ class GameListFragment : Fragment(), AnkoLogger {
         })
     }
 
+    override fun onPause() {
+        super.onPause()
+        (activity as Home).hideKeyboard(activity as Home)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as Home).hideKeyboard((activity as Home))
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

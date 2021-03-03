@@ -34,4 +34,5 @@
     <string name="nav_header_desc">User info when login system is a thing</string>
     <string name="navigation_drawer_open">Open Nav Bar</string>
     <string name="navigation_drawer_close">Close Nav Bar</string>
+    <string name="status">Status</string>
 </resources>
