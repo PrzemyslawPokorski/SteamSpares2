@@ -7,15 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.wit.steamspares.R
-import com.wit.steamspares.activities.ListActivity
-import com.wit.steamspares.main.MainApp
+import com.wit.steamspares.activities.Home
 import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game.*
-import kotlinx.android.synthetic.main.fragment_game_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
@@ -63,7 +59,7 @@ class EditGameFragment : Fragment(), AnkoLogger {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as ListActivity).askForMenu(ListActivity.MenuType.EDIT)
+        (activity as Home).askForMenu(Home.MenuType.EDIT)
         info { "Debug: onActivityCreated - edit fragment "}
 
         spinner = gameStatus

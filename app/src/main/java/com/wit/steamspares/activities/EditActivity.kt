@@ -1,6 +1,5 @@
 package com.wit.steamspares.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,12 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.wit.steamspares.R
 import com.wit.steamspares.main.MainApp
-import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.toast
 
 
 class EditActivity : AppCompatActivity(), AnkoLogger {
@@ -101,7 +98,7 @@ class EditActivity : AppCompatActivity(), AnkoLogger {
         when (item.itemId) {
             R.id.action_cancel -> {
                 info {"Debug: Pressed cancel"}
-                startActivityForResult<ListActivity>(0)
+                startActivityForResult<Home>(0)
             }
         }
         return super.onOptionsItemSelected(item)

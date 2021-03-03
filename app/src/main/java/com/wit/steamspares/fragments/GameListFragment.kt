@@ -1,21 +1,15 @@
 package com.wit.steamspares.fragments
 
 import GameListAdapter
-import android.graphics.Color
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wit.steamspares.R
-import com.wit.steamspares.activities.ListActivity
-import com.wit.steamspares.main.MainApp
+import com.wit.steamspares.activities.Home
 import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
-import kotlinx.android.synthetic.main.card_game.*
 import kotlinx.android.synthetic.main.fragment_game_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -78,7 +72,7 @@ class GameListFragment : Fragment(), AnkoLogger {
         info { "Debug: onActivityCreated - gamelist fragment "}
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
         gameRecyclerView.adapter = adapter
-        (activity as ListActivity).askForMenu(ListActivity.MenuType.LIST)
+        (activity as Home).askForMenu(Home.MenuType.LIST)
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -86,7 +80,7 @@ class GameListFragment : Fragment(), AnkoLogger {
         val game = gameRecyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
         when(item.toString()){
             getString(R.string.edit) -> {
-                (activity as ListActivity).navigateTo(EditGameFragment.newInstance(gameMemStore, game))
+                (activity as Home).navigateTo(EditGameFragment.newInstance(gameMemStore, game))
             }
             getString(R.string.delete) ->{
                 gameMemStore.delete(game)

@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.wit.steamspares.activities.ListActivity"
+            android:name="com.wit.steamspares.activities.Home"
             android:windowSoftInputMode="adjustNothing"
             >
             <intent-filter>

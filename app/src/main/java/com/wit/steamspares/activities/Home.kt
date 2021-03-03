@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
 import android.widget.Spinner
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.wit.steamspares.R
@@ -17,7 +19,7 @@ import kotlinx.android.synthetic.main.app_bar.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-class ListActivity : AppCompatActivity(), AnkoLogger{
+class Home : AppCompatActivity(), AnkoLogger{
     enum class MenuType{
         LIST, EDIT
     }
@@ -32,13 +34,26 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.app_bar)
+        setContentView(R.layout.home)
         app = application as MainApp
         topMenu = MenuType.LIST
 
         toolbar.title = title
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
+
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+
+        info { "Debug: Navbar element: ${navView}" }
+
+        val toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        info { "Debug: drawerlayout is $drawer" }
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
 
         fragmentTransaction = supportFragmentManager.beginTransaction()
 
