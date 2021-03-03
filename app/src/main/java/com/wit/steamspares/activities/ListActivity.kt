@@ -64,18 +64,6 @@ class ListActivity : AppCompatActivity(), AnkoLogger{
                 if (menu != null) {
                     filter = menu.findItem(R.id.filter_bar).actionView as SearchView
                     filter.setOnQueryTextListener(listenerHelper)
-
-                    spinner = menu.findItem(R.id.status_spinner).actionView as Spinner
-                    supportActionBar?.let {
-                        ArrayAdapter.createFromResource(
-                            it.themedContext, R.array.status_options, android.R.layout.simple_spinner_item
-                        ).also { adapter ->
-                            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-                            spinner.adapter = adapter
-                            spinner.onItemSelectedListener = listenerHelper
-                            spinner.setSelection(1)
-                        }
-                    }
                 }
             }
         }

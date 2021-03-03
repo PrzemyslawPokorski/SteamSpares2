@@ -16,32 +16,9 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel() {
     val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
     val steamAppType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
     val STEAMAPP_FILE = "steamappids.json"
-//    var games = ArrayList<GameModel>()
-//    var gamesLD: MutableLiveData<ArrayList<GameModel>>? = null
     var gamesLD = MutableLiveData<ArrayList<GameModel>>()
     var steamList = ArrayList<SteamAppModel>()
     lateinit var jsonHelper : jsonHelper
-
-//    fun findAll(): List<GameModel> {
-//        gamesLD = MutableLiveData<ArrayList<GameModel>>()
-//        if(steamList.count() == 0){
-//            runBlocking {
-//                jsonHelper = jsonHelper()
-//                if (jsonHelper.fileExists(STEAMAPP_FILE, context) && jsonHelper.lastFileUpdate(STEAMAPP_FILE, context) < 60){
-//                    steamList = jsonHelper.loadIdsFromJson(context)
-//                }
-//                else{
-//                    steamList = jsonHelper.downloadSteamAppList() as ArrayList<SteamAppModel>
-//                    jsonHelper.saveIdsToJson(steamList, context)
-//                }
-//            }
-//        }
-//
-//        if(games.count() == 0 && jsonHelper.fileExists(GAMES_FILE, context))
-//            games = jsonHelper.loadGamesFromJson(context)
-//
-//        return games
-//    }
 
     fun findAll(): MutableLiveData<ArrayList<GameModel>>? {
         if(steamList.count() == 0){

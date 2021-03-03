@@ -41,6 +41,8 @@ class GameListFragment : Fragment(), AnkoLogger {
         arguments?.let {
         }
 
+
+
         gameMemStore.gamesLD!!.observe(this, Observer {
             info { "Debug: Observer fired" }
             gameList.clear()
