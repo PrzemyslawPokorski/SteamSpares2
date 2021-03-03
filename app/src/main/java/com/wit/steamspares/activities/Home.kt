@@ -67,6 +67,10 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         navigateTo(GameListFragment.newInstance(app.gameMemStore, false), addToStack = false)
     }
 
+    /**
+     * Taken from:
+     * https://rmirabelle.medium.com/close-hide-the-soft-keyboard-in-android-db1da22b09d2
+     */
     fun hideKeyboard(activity: Activity) {
         val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         //Find the currently focused view, so we can grab the correct window token from it.

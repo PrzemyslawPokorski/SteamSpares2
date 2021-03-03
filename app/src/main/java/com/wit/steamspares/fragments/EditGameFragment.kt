@@ -59,6 +59,12 @@ class EditGameFragment : Fragment(), AnkoLogger {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            (activity as Home).applicationContext,
+            android.R.layout.simple_dropdown_item_1line, gameNames
+        )
+        gameTitle.setAdapter(adapter)
+
         (activity as Home).askForMenu(Home.MenuType.EDIT)
         info { "Debug: onActivityCreated - edit fragment "}
 
