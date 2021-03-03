@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentTransaction
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
-import com.wit.steamspares.helpers.UIListener
 import com.wit.steamspares.main.MainApp
 import kotlinx.android.synthetic.main.home.*
 import kotlinx.android.synthetic.main.app_bar.*
@@ -29,8 +28,6 @@ class Home : AppCompatActivity(), AnkoLogger{
     lateinit var filter : SearchView
     lateinit var fragmentTransaction : FragmentTransaction
     lateinit var topMenu : MenuType
-
-    val listenerHelper = UIListener()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
