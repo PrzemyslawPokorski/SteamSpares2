@@ -30,11 +30,11 @@ private const val ARG_PARAM2 = "param2"
  * Use the [GameListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class GameListFragment : Fragment(), AnkoLogger
-     {
+class GameListFragment : Fragment(), AnkoLogger {
     private lateinit var adapter: GameListAdapter
     private lateinit var gameMemStore: GameMemStore
     private var gameList = ArrayList<GameModel>()
+    private var usedStatus: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class GameListFragment : Fragment(), AnkoLogger
         gameMemStore.gamesLD!!.observe(this, Observer {
             info { "Debug: Observer fired" }
             gameList.clear()
-            gameList.addAll(it)
+            gameList.addAll(gameMemStore.getUsed(usedStatus))
             adapter.notifyDataSetChanged()
         })
     }
@@ -57,11 +57,6 @@ class GameListFragment : Fragment(), AnkoLogger
         return inflater.inflate(R.layout.fragment_game_list, container, false)
     }
 
-         override fun onResume() {
-             super.onResume()
-             info { "Debug: List fragment Resume" }
-         }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         info { "Debug: onActivityCreated - gamelist fragment "}
@@ -69,7 +64,6 @@ class GameListFragment : Fragment(), AnkoLogger
         gameRecyclerView.adapter = adapter
         (activity as ListActivity).askForMenu(ListActivity.MenuType.LIST)
     }
-
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         info { "Debug: Context item clicked: ${item.toString()}" }
@@ -106,7 +100,6 @@ class GameListFragment : Fragment(), AnkoLogger
                 }
                 //TODO: Is this ok?
                 this.gameMemStore = memStore
-//                this.adapter = GameListAdapter(memStore.getUsed(usedStatus).toMutableList())
                 this.adapter = GameListAdapter(gameList)
             }
     }
