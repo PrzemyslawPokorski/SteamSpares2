@@ -129,12 +129,10 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-//        TODO("Not yet implemented")
         return false
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-//        TODO("Not yet implemented")
         filterQuery.value = newText
         return true
     }
