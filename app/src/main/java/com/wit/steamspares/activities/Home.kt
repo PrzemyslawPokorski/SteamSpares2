@@ -111,7 +111,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
 
                 if (menu != null) {
                     filter = menu.findItem(R.id.filter_bar).actionView as SearchView
-                    filter.setOnQueryTextListener(app.gameMemStore)
+                    filter.setOnQueryTextListener(GameMemStore)
                 }
             }
         }
@@ -122,7 +122,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_add -> {
-                navigateTo(EditGameFragment.newInstance(app.gameMemStore))
+                navigateTo(EditGameFragment.newInstance(GameMemStore))
             }
             R.id.action_cancel ->{
                 supportFragmentManager.popBackStack()
@@ -146,7 +146,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         val ft : FragmentTransaction
         var fragment = supportFragmentManager.findFragmentByTag(status.fragName)
         if(fragment == null){
-            fragment = GameListFragment.newInstance(app.gameMemStore, status.usedStatus)
+            fragment = GameListFragment.newInstance(GameMemStore, status.usedStatus)
         }
 
         info { "Debug multifrag: Should navigate to ${status.fragName} list" }

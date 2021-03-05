@@ -21,11 +21,6 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 /**
  * A simple [Fragment] subclass.
  * Use the [GameListFragment.newInstance] factory method to
@@ -33,8 +28,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class GameListFragment : Fragment(), AnkoLogger {
     private lateinit var adapter: GameListAdapter
-//    private val gameMemStore: GameMemStore by activityViewModels()
-    private lateinit var gameMemStore: GameMemStore
     private var gameList = ArrayList<GameModel>()
     private var usedStatus: Boolean = false
 
@@ -69,9 +62,9 @@ class GameListFragment : Fragment(), AnkoLogger {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        gameMemStore = ViewModelProvider(this).get(GameMemStore::class.java)
+
         //Using shared view model properly broke some things in the process - might redo slightly later
-        gameMemStore.gamesLD!!.observe(viewLifecycleOwner, Observer {
+        GameMemStore.gamesLD!!.observe(viewLifecycleOwner, Observer {
             info { "Debug: Observer fired" }
             gameList.clear()
             gameList.addAll(it.filter {
@@ -79,10 +72,10 @@ class GameListFragment : Fragment(), AnkoLogger {
             })
             adapter.notifyDataSetChanged()
         })
-        gameMemStore.filterQuery.observe(viewLifecycleOwner, Observer {
+        GameMemStore.filterQuery.observe(viewLifecycleOwner, Observer {
             val query = it
             info { "Debug: Filter updated to $it" }
-            val filteredList = gameMemStore.gamesLD.value!!.filter {
+            val filteredList = GameMemStore.gamesLD.value!!.filter {
                 (it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true) &&
                         it.status == this.usedStatus
             }
@@ -128,14 +121,14 @@ class GameListFragment : Fragment(), AnkoLogger {
         val game = gameRecyclerView.findViewHolderForAdapterPosition(item.groupId)?.itemView?.tag as GameModel
         when(item.toString()){
             getString(R.string.edit) -> {
-                (activity as Home).navigateTo(EditGameFragment.newInstance(gameMemStore, game))
+                (activity as Home).navigateTo(EditGameFragment.newInstance(GameMemStore, game))
             }
             getString(R.string.delete) ->{
-                gameMemStore.delete(game)
+                GameMemStore.delete(game)
             }
             getString(R.string.status_swap) -> {
                 game.status = !game.status
-                gameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
+                GameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
             }
         }
         return super.onContextItemSelected(item)

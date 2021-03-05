@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-class GameMemStore : AnkoLogger, ViewModel(),
+object GameMemStore : AnkoLogger, ViewModel(),
     SearchView.OnQueryTextListener {
     val GAMES_FILE = "steamspares.json"
     val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
