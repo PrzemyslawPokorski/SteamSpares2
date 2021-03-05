@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
+import androidx.transition.TransitionInflater
 import com.wit.steamspares.R
 import com.wit.steamspares.activities.Home
 import com.wit.steamspares.main.MainApp
@@ -33,6 +34,7 @@ class GameListFragment : Fragment(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
             if(savedInstanceState != null){
                 val bundleStatus = it.getBoolean("usedStatus")

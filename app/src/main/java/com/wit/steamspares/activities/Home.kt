@@ -13,6 +13,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.commit
 import com.google.android.material.navigation.NavigationView
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.EditGameFragment
@@ -143,18 +144,24 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
     }
 
     fun navigateTo(fragment: Fragment, addToStack: Boolean = true) {
-        val ft = supportFragmentManager.beginTransaction()
-            .replace(R.id.mainAppFrame, fragment)
-        if(addToStack)
-            ft.addToBackStack(null)
-        ft.commit()
+        supportFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.fade_in,
+                R.anim.fade_out,
+                R.anim.fade_in,
+                R.anim.fade_out
+            )
+            replace(R.id.mainAppFrame, fragment)
+            if(addToStack)
+                addToBackStack(null)
+        }
+
         hideKeyboard(this)
     }
 
     fun navigateTo(status: UsedStatus? = null, addToStack: Boolean = true) {
         if(status == null)
             return
-        val ft : FragmentTransaction
         var fragment = supportFragmentManager.findFragmentByTag(status.fragName)
         if(fragment == null){
             fragment = GameListFragment.newInstance(GameMemStore, status.usedStatus)
@@ -162,12 +169,27 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
 
         info { "Debug multifrag: Should navigate to ${status.fragName} list" }
 
-        ft = supportFragmentManager.beginTransaction()
-            .replace(R.id.mainAppFrame, fragment, status.fragName)
+        supportFragmentManager.commit {
+            if(status.usedStatus)
+                setCustomAnimations(
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left,
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+            else
+                setCustomAnimations(
+                    R.anim.slide_in_left,
+                    R.anim.slide_out_right,
+                    R.anim.slide_in_left,
+                    R.anim.slide_out_right
+                )
+            replace(R.id.mainAppFrame, fragment, status.fragName)
+            if(addToStack)
+                addToBackStack(null)
+        }
 
-        if(addToStack)
-            ft.addToBackStack(null)
-        ft?.commit()
+        hideKeyboard(this)
     }
 
     fun askForMenu(menuType: MenuType){
