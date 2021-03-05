@@ -94,7 +94,9 @@ class GameListFragment : Fragment(), AnkoLogger {
         info { "Debug: onActivityCreated - gamelist fragment "}
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
         gameRecyclerView.adapter = adapter
-        (activity as Home).askForMenu(Home.MenuType.LIST)
+
+        val menuRequest = if(usedStatus) Home.MenuType.LIST_USED else Home.MenuType.LIST_UNUSED
+        (activity as Home).askForMenu(menuRequest)
 
         val mOnItemTouchListener: OnItemTouchListener = object : OnItemTouchListener {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {

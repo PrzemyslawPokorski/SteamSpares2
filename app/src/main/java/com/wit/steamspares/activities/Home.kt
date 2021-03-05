@@ -2,6 +2,7 @@ package com.wit.steamspares.activities
 
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -30,13 +31,14 @@ import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.home.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.colorAttr
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 
 
 class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSelectedListener {
-    enum class MenuType{
-        LIST, EDIT
+    enum class MenuType(val color: Int){
+        LIST_USED(R.color.used_game_bar), LIST_UNUSED(R.color.unused_game_bar), EDIT(R.color.colorAccent)
     }
 
     enum class UsedStatus(val fragName: String, val usedStatus: Boolean){
@@ -56,7 +58,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         setContentView(R.layout.home)
 
         app = application as MainApp
-        topMenu = MenuType.LIST
+        topMenu = MenuType.LIST_UNUSED
 
         toolbar.title = title
         setSupportActionBar(toolbar)
@@ -105,9 +107,20 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         when(topMenu){
             MenuType.EDIT -> {
                 menuInflater.inflate(R.menu.menu_steamspares_add, menu)
+                toolbar.setBackgroundColor(resources.getColor(MenuType.EDIT.color))
             }
-            MenuType.LIST -> {
+            MenuType.LIST_UNUSED -> {
                 menuInflater.inflate(R.menu.menu_steamspares_list, menu)
+                toolbar.setBackgroundColor(resources.getColor(MenuType.LIST_UNUSED.color))
+
+                if (menu != null) {
+                    filter = menu.findItem(R.id.filter_bar).actionView as SearchView
+                    filter.setOnQueryTextListener(GameMemStore)
+                }
+            }
+            MenuType.LIST_USED -> {
+                menuInflater.inflate(R.menu.menu_steamspares_list, menu)
+                toolbar.setBackgroundColor(resources.getColor(MenuType.LIST_USED.color))
 
                 if (menu != null) {
                     filter = menu.findItem(R.id.filter_bar).actionView as SearchView
