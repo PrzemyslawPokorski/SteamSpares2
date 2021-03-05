@@ -82,6 +82,7 @@ class EditGameFragment : Fragment(), AnkoLogger {
         if (gameToEdit != null) {
             gameTitle.setText(gameToEdit!!.name)
             gameCode.setText(gameToEdit!!.code)
+            gameNotes.setText(gameToEdit!!.notes)
             btnAdd.setText(R.string.button_saveGame)
             spinner.setSelection(if(gameToEdit!!.status) 1 else 0)
             editingGameId = gameToEdit!!.id
