@@ -135,15 +135,13 @@ class GameListFragment : Fragment(), AnkoLogger {
          * @return A new instance of fragment GameListFragment.
          */
         @JvmStatic
-        fun newInstance(memStore: GameMemStore, usedStatus : Boolean) =
+        fun newInstance(memStore: GameMemStore, status : Boolean) =
             GameListFragment().apply {
                 arguments = Bundle().apply {
-
+                    adapter = GameListAdapter(gameList)
+                    gameMemStore = memStore
+                    usedStatus = status
                 }
-                //TODO: Is this ok?
-                this.gameMemStore = memStore
-                this.adapter = GameListAdapter(gameList)
-                this.usedStatus = usedStatus
             }
     }
 }
