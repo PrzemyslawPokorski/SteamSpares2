@@ -18,6 +18,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.wit.steamspares.R
@@ -44,19 +45,16 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
     }
 
     lateinit var app: MainApp
-    val gameStore: GameMemStore by viewModels()
+    lateinit var gameStore: GameMemStore
     lateinit var filter : SearchView
     lateinit var fragmentTransaction : FragmentTransaction
     lateinit var topMenu : MenuType
     lateinit var detector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        gameStore.gamesLD.observe(this, Observer<List<GameModel>>{ games ->
-            // update UI
-            info { "Debug: Change in games observed in activity" }
-        })
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
+
         app = application as MainApp
         topMenu = MenuType.LIST
 
@@ -66,24 +64,23 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
 
         detector = GestureDetector(this, GestureListener())
 
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        navView.setNavigationItemSelectedListener(this)
 
-        info { "Debug: Navbar element: ${navView}" }
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
 
         val toggle = ActionBarDrawerToggle(
             this, drawer, toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
-        info { "Debug: drawerlayout is $drawer" }
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-        navView.setNavigationItemSelectedListener(this)
+        if(savedInstanceState == null) {
+            fragmentTransaction = supportFragmentManager.beginTransaction()
 
-        fragmentTransaction = supportFragmentManager.beginTransaction()
-
-        navigateTo(UsedStatus.UNUSED, addToStack = false)
+            navigateTo(UsedStatus.UNUSED, addToStack = false)
+        }
     }
 
 

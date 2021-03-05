@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
@@ -32,7 +33,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class GameListFragment : Fragment(), AnkoLogger {
     private lateinit var adapter: GameListAdapter
-    private val gameMemStore: GameMemStore by activityViewModels()
+//    private val gameMemStore: GameMemStore by activityViewModels()
+    private lateinit var gameMemStore: GameMemStore
     private var gameList = ArrayList<GameModel>()
     private var usedStatus: Boolean = false
 
@@ -40,37 +42,17 @@ class GameListFragment : Fragment(), AnkoLogger {
         super.onCreate(savedInstanceState)
         arguments?.let {
             if(savedInstanceState != null){
-                info { "Debug some saved stuff eg. used: ${it.getBoolean("usedStatus")}" }
+                val bundleStatus = it.getBoolean("usedStatus")
+                usedStatus = bundleStatus
+                info { "Debug2 bundle status saved for $bundleStatus" }
             }
             else{
-                info { "Debug nothing saved in instance" }
+                info { "Debug2 nothing saved in instance" }
             }
         }
 
+        info { "Debug2 created fragment for status $usedStatus" }
         adapter = GameListAdapter(gameList)
-
-        //Using shared view model properly broke some things in the process - might redo slightly later
-        gameMemStore.filterQuery.observe(this, Observer {
-            val query = it
-            info { "Debug: Filter updated to $it" }
-            val filteredList = gameMemStore.gamesLD.value!!.filter {
-                (it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true) &&
-                        it.status == this.usedStatus
-            }
-            gameList.clear()
-            gameList.addAll(filteredList)
-            info { "Debug: Filtered list item count: ${filteredList.count()} vs gameList count: ${gameList.count()}" }
-            adapter.notifyDataSetChanged()
-        })
-
-        gameMemStore.gamesLD!!.observe(this, Observer {
-            info { "Debug: Observer fired" }
-            gameList.clear()
-            gameList.addAll(it.filter {
-                it.status == this.usedStatus
-            })
-            adapter.notifyDataSetChanged()
-        })
     }
 
     override fun onPause() {
@@ -87,6 +69,29 @@ class GameListFragment : Fragment(), AnkoLogger {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        gameMemStore = ViewModelProvider(this).get(GameMemStore::class.java)
+        //Using shared view model properly broke some things in the process - might redo slightly later
+        gameMemStore.gamesLD!!.observe(viewLifecycleOwner, Observer {
+            info { "Debug: Observer fired" }
+            gameList.clear()
+            gameList.addAll(it.filter {
+                it.status == this.usedStatus
+            })
+            adapter.notifyDataSetChanged()
+        })
+        gameMemStore.filterQuery.observe(viewLifecycleOwner, Observer {
+            val query = it
+            info { "Debug: Filter updated to $it" }
+            val filteredList = gameMemStore.gamesLD.value!!.filter {
+                (it.name.contains(query, ignoreCase = true) || it.notes?.contains(query, ignoreCase = true) ?: true) &&
+                        it.status == this.usedStatus
+            }
+            gameList.clear()
+            gameList.addAll(filteredList)
+            info { "Debug: Filtered list item count: ${filteredList.count()} vs gameList count: ${gameList.count()}" }
+            adapter.notifyDataSetChanged()
+        })
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game_list, container, false)
     }
@@ -150,9 +155,8 @@ class GameListFragment : Fragment(), AnkoLogger {
             GameListFragment().apply {
                 arguments = Bundle().apply {
 //                    gameMemStore = memStore
-                    usedStatus = status
-
                     this.putBoolean("usedStatus", status)
+                    usedStatus = status
                 }
             }
     }
