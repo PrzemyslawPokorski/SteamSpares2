@@ -1,37 +1,27 @@
 package com.wit.steamspares.activities
 
 import android.app.Activity
-import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
-import android.widget.Spinner
-import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameMemStore
-import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.home.*
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.colorAttr
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 
@@ -51,7 +41,12 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
     lateinit var filter : SearchView
     lateinit var fragmentTransaction : FragmentTransaction
     lateinit var topMenu : MenuType
-    lateinit var detector: GestureDetector
+    lateinit var detector: GestureDetectorCompat
+
+    var touchTime : Long = 0
+    var touchX : Float = 0f
+    var touchY : Float = 0f
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +59,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
-        detector = GestureDetector(this, GestureListener())
+        detector = GestureDetectorCompat(this, GestureListener())
 
         navView.setNavigationItemSelectedListener(this)
 
@@ -85,8 +80,6 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         }
     }
 
-
-
     /**
      * Taken from:
      * https://rmirabelle.medium.com/close-hide-the-soft-keyboard-in-android-db1da22b09d2
@@ -101,6 +94,11 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         }
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         info { "Debug: Hiding keyboard" }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        info { "Debug4 touch event" }
+        return super.onTouchEvent(event)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -189,7 +187,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         return true
     }
 
-    //https://www.youtube.com/watch?v=j1aydFEOEA0
+//    https://www.youtube.com/watch?v=j1aydFEOEA0
     inner class GestureListener : GestureDetector.SimpleOnGestureListener(){
         private val SWIPE_THRESHOLD = 100 //100 pixels minimum for swipe
         private val SWIPE_VEL_THRESHOLD = 100 //Test!
@@ -216,5 +214,30 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
 
             return super.onFling(e1, e2, velocityX, velocityY)
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if(topMenu == MenuType.EDIT)
+            return super.dispatchTouchEvent(ev)
+
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            touchTime = SystemClock.uptimeMillis()
+            touchX = ev.rawX
+        }
+        else if(ev.action == MotionEvent.ACTION_UP){
+            val timeTouched = SystemClock.uptimeMillis() - touchTime
+            val xDist = Math.abs(touchX - ev.rawX)
+            val dir = if (touchX - ev.rawX > 0) "left" else "right"
+            info { "Debug4: Finger raised $timeTouched long with $xDist distance in direction $dir" }
+            if(timeTouched > 100 && xDist > 100 && xDist/timeTouched > 1) {
+                info { "Debug4 Its a swipe!" }
+                when(dir){
+                    "left" -> navigateTo(UsedStatus.USED, false)
+                    "right" -> navigateTo(UsedStatus.UNUSED, false)
+                }
+            }
+        }
+
+        return super.dispatchTouchEvent(ev)
     }
 }
