@@ -34,6 +34,11 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         LIST, EDIT
     }
 
+    enum class UsedStatus(val fragName: String, val usedStatus: Boolean){
+        USED("USED", true),
+        UNUSED("UNUSED", false)
+    }
+
     lateinit var app: MainApp
     lateinit var spinner : Spinner
     lateinit var filter : SearchView
@@ -70,7 +75,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
 
         fragmentTransaction = supportFragmentManager.beginTransaction()
 
-        navigateTo(GameListFragment.newInstance(app.gameMemStore, false), addToStack = false)
+        navigateTo(UsedStatus.UNUSED, addToStack = false)
     }
 
 
@@ -130,6 +135,25 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         hideKeyboard(this)
     }
 
+    fun navigateTo(status: UsedStatus? = null, addToStack: Boolean = true) {
+        if(status == null)
+            return
+        val ft : FragmentTransaction
+        var fragment = supportFragmentManager.findFragmentByTag(status.fragName)
+        if(fragment == null){
+            fragment = GameListFragment.newInstance(app.gameMemStore, status.usedStatus)
+        }
+
+        info { "Debug multifrag: Should navigate to ${status.fragName} list" }
+
+        ft = supportFragmentManager.beginTransaction()
+            .replace(R.id.mainAppFrame, fragment, status.fragName)
+
+        if(addToStack)
+            ft.addToBackStack(null)
+        ft?.commit()
+    }
+
     fun askForMenu(menuType: MenuType){
         topMenu = menuType
         info { "Debug: Navigate asked for menu $menuType" }
@@ -138,8 +162,8 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_unused -> navigateTo(GameListFragment.newInstance(app.gameMemStore, false), false)
-            R.id.nav_used -> navigateTo(GameListFragment.newInstance(app.gameMemStore, true), false)
+            R.id.nav_unused -> navigateTo(UsedStatus.UNUSED, addToStack = false)
+            R.id.nav_used -> navigateTo(UsedStatus.USED, addToStack = false)
 
             else -> toast("This screen is not yet implemented")
         }
@@ -160,13 +184,14 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
             var diffX = e2?.x?.minus(e1!!.x) ?: 0.0f
             if(Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VEL_THRESHOLD){
                 if(diffX > 0 ){
+                    //Destinations are placeholder
                     //Right swipe
-                    this@Home.navigateTo(GameListFragment.newInstance(app.gameMemStore, true), false)
+                    this@Home.navigateTo(UsedStatus.USED, addToStack = false)
                     info { "Debug right swipe" }
                 }
                 else{
                     //Left swipe
-                    this@Home.navigateTo(GameListFragment.newInstance(app.gameMemStore, false), false)
+                    this@Home.navigateTo(UsedStatus.UNUSED, addToStack = false)
                     info { "Debug left swipe" }
                 }
             }
