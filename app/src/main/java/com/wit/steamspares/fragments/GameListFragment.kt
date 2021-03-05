@@ -4,12 +4,15 @@ import GameListAdapter
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.wit.steamspares.R
 import com.wit.steamspares.activities.Home
+import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.fragment_game_list.*
@@ -29,14 +32,22 @@ private const val ARG_PARAM2 = "param2"
  */
 class GameListFragment : Fragment(), AnkoLogger {
     private lateinit var adapter: GameListAdapter
-    private lateinit var gameMemStore: GameMemStore
+    private val gameMemStore: GameMemStore by activityViewModels()
     private var gameList = ArrayList<GameModel>()
     private var usedStatus: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            if(savedInstanceState != null){
+                info { "Debug some saved stuff eg. used: ${it.getBoolean("usedStatus")}" }
+            }
+            else{
+                info { "Debug nothing saved in instance" }
+            }
         }
+
+        adapter = GameListAdapter(gameList)
 
         //Using shared view model properly broke some things in the process - might redo slightly later
         gameMemStore.filterQuery.observe(this, Observer {
@@ -138,9 +149,10 @@ class GameListFragment : Fragment(), AnkoLogger {
         fun newInstance(memStore: GameMemStore, status : Boolean) =
             GameListFragment().apply {
                 arguments = Bundle().apply {
-                    adapter = GameListAdapter(gameList)
-                    gameMemStore = memStore
+//                    gameMemStore = memStore
                     usedStatus = status
+
+                    this.putBoolean("usedStatus", status)
                 }
             }
     }

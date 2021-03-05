@@ -7,6 +7,7 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import android.widget.Spinner
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,18 +17,21 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
 import com.wit.steamspares.main.MainApp
+import com.wit.steamspares.models.GameMemStore
+import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.home.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
-import java.util.jar.Manifest
+
 
 class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSelectedListener {
     enum class MenuType{
@@ -40,13 +44,17 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
     }
 
     lateinit var app: MainApp
-    lateinit var spinner : Spinner
+    val gameStore: GameMemStore by viewModels()
     lateinit var filter : SearchView
     lateinit var fragmentTransaction : FragmentTransaction
     lateinit var topMenu : MenuType
     lateinit var detector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        gameStore.gamesLD.observe(this, Observer<List<GameModel>>{ games ->
+            // update UI
+            info { "Debug: Change in games observed in activity" }
+        })
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
         app = application as MainApp

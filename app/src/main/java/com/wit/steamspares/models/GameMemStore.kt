@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
+class GameMemStore : AnkoLogger, ViewModel(),
     SearchView.OnQueryTextListener {
     val GAMES_FILE = "steamspares.json"
     val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
@@ -22,6 +22,7 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
     val filterQuery = MutableLiveData<String>()
     var steamList = ArrayList<SteamAppModel>()
     lateinit var jsonHelper : jsonHelper
+    lateinit var context: Context
 
     fun findAll(): MutableLiveData<ArrayList<GameModel>>? {
         if(steamList.count() == 0){
@@ -59,7 +60,7 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
 
     fun create(name: String, code : String, status : Boolean, notes: String) {
         val newVal = gamesLD.value?.apply { add(GameModel(findSteamId(name), name, code, status, notes)) }
-        gamesLD.value = newVal
+        gamesLD.value = newVal!!
 
         info { "Debug gamesLD is ${gamesLD.value}" }
         jsonHelper.saveGamesToJson(gamesLD.value!!, context)
@@ -91,7 +92,7 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
         val newVal = gamesLD.value?.apply { remove(game) }
 
         //Update the value for observers
-        gamesLD.value = newVal
+        gamesLD.value = newVal!!
         jsonHelper.saveGamesToJson(gamesLD.value!!, context)
     }
 
@@ -139,7 +140,7 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        filterQuery.value = newText
+        filterQuery.value = newText!!
         return true
     }
 }
