@@ -38,8 +38,13 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
         }
 
         //TODO: Make sure this works with null safe etc
-        info { "Debug: ${gamesLD}" }
-        if(gamesLD.value == null && jsonHelper.fileExists(GAMES_FILE, context)){
+        info { "Debug: gamesLD val ${gamesLD.value}" }
+        if(!jsonHelper.fileExists(GAMES_FILE, context)){
+            jsonHelper.createFile(GAMES_FILE, context)
+        }
+        info { "Debug json file exists: ${jsonHelper.fileExists(GAMES_FILE, context)}" }
+        if(gamesLD.value == null){
+            info { "Debug loading to gamesLD" }
             gamesLD = MutableLiveData<ArrayList<GameModel>>()
             gamesLD!!.value = jsonHelper.loadGamesFromJson(context)
         }
@@ -56,6 +61,7 @@ class GameMemStore(val context : Context) : AnkoLogger, ViewModel(),
         val newVal = gamesLD.value?.apply { add(GameModel(findSteamId(name), name, code, status, notes)) }
         gamesLD.value = newVal
 
+        info { "Debug gamesLD is ${gamesLD.value}" }
         jsonHelper.saveGamesToJson(gamesLD.value!!, context)
         logAll()
     }

@@ -12,6 +12,7 @@ import com.wit.steamspares.activities.Home
 import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.activity_game.*
+import kotlinx.android.synthetic.main.fragment_game_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
@@ -110,6 +111,7 @@ class EditGameFragment : Fragment(), AnkoLogger {
             else
                 activity?.toast(R.string.bad_code_hint)
         }
+
     }
 
     companion object {

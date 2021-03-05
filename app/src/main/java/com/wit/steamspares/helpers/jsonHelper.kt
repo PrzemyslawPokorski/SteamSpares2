@@ -1,7 +1,7 @@
 package com.wit.steamspares.helpers
 
 import android.content.Context
-import android.icu.text.SimpleDateFormat
+import android.os.Environment
 import android.util.Log
 import androidx.annotation.UiThread
 import com.google.gson.GsonBuilder
@@ -10,17 +10,12 @@ import com.wit.steamspares.model.SteamAppModel
 import com.wit.steamspares.models.GameModel
 import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.info
 import java.io.*
 import java.net.URL
-import java.nio.file.Files
-import java.nio.file.attribute.BasicFileAttributes
 import java.time.Instant
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.concurrent.thread
-import kotlin.system.measureTimeMillis
 
 class jsonHelper : AnkoLogger{
     val gson = GsonBuilder().setPrettyPrinting().create()
@@ -53,7 +48,6 @@ class jsonHelper : AnkoLogger{
     }
 
     fun saveGamesToJson(games : List<GameModel>, context: Context){
-        info { context }
         val jsonString = gson.toJson(games, gamesType)
         try {
 
@@ -74,11 +68,10 @@ class jsonHelper : AnkoLogger{
         } catch (e: IOException) {
             Log.e("Error: ", "cannot read file: " + e.toString());
         }
-        return gson.fromJson(jsonString, gamesType)
+        return gson.fromJson(jsonString, gamesType)?: ArrayList<GameModel>()
     }
 
     fun saveIdsToJson(games : List<SteamAppModel>, context: Context){
-        info { context }
         val jsonString = gson.toJson(games, appidsType)
         try {
             val outputStreamWriter = OutputStreamWriter(context.openFileOutput(APPIDS_FILE, Context.MODE_PRIVATE))
@@ -102,7 +95,6 @@ class jsonHelper : AnkoLogger{
     }
 
     fun fileExists(file : String, context: Context): Boolean {
-        info { context }
         val file = context.getFileStreamPath(file)
         return file.exists()
     }
@@ -121,5 +113,11 @@ class jsonHelper : AnkoLogger{
         info { "Last steam app ids update: $minutes minutes ago" }
 
         return minutes
+    }
+
+    fun createFile(fileName: String, context: Context) {
+        info { "Debug: files dir: ${context.getFilesDir()}" }
+        val file = File("${context.filesDir}/${fileName}")
+        file.createNewFile()
     }
 }

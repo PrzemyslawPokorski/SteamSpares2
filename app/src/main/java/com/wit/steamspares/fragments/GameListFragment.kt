@@ -6,6 +6,8 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.wit.steamspares.R
 import com.wit.steamspares.activities.Home
 import com.wit.steamspares.models.GameMemStore
@@ -13,6 +15,7 @@ import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.fragment_game_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,6 +86,25 @@ class GameListFragment : Fragment(), AnkoLogger {
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
         gameRecyclerView.adapter = adapter
         (activity as Home).askForMenu(Home.MenuType.LIST)
+
+        val mOnItemTouchListener: OnItemTouchListener = object : OnItemTouchListener {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                if (e.action == MotionEvent.ACTION_DOWN && rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    info { "Debug touch intercept event" }
+                    rv.findChildViewUnder(e.x, e.y)!!.performClick()
+                    return true
+                }
+                return false
+            }
+
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                info { "Debug touch event" }
+            }
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+        }
+
+        gameRecyclerView.addOnItemTouchListener(mOnItemTouchListener)
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

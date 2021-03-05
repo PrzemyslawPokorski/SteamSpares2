@@ -1,6 +1,10 @@
 package com.wit.steamspares.main
 
 import android.app.Application
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat
 import com.wit.steamspares.helpers.jsonHelper
 import com.wit.steamspares.model.SteamAppModel
 import com.wit.steamspares.models.GameMemStore
@@ -10,6 +14,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import java.util.jar.Manifest
 
 class MainApp : Application(), AnkoLogger {
     val gameMemStore = GameMemStore(this)
