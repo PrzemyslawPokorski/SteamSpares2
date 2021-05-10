@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "731452278754",
+    "firebase_url": "https://steamspares.firebaseio.com",
+    "project_id": "steamspares",
+    "storage_bucket": "steamspares.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731452278754:android:3b0d1d7c06ef0e3c3c9bbb",
+        "android_client_info": {
+          "package_name": "com.example.steamspares"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "731452278754-2fv1ka5gmbocl5u2mh4tc5sgbmoe340d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAikPmRhIWRorxPc7ikqYRrwcsy2rIdRXs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "731452278754-2fv1ka5gmbocl5u2mh4tc5sgbmoe340d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
