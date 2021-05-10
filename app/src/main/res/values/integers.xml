@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="steam_app_id_timeout">1440</integer>
+</resources>

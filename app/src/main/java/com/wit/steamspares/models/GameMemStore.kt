@@ -1,16 +1,22 @@
 package com.wit.steamspares.models
 
+import android.app.Application
 import android.content.Context
+import android.graphics.Color
+import android.view.View
 import android.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.reflect.TypeToken
+import com.wit.steamspares.R
 import com.wit.steamspares.helpers.jsonHelper
 import com.wit.steamspares.model.SteamAppModel
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import kotlinx.android.synthetic.main.home.*
 
 object GameMemStore : AnkoLogger, ViewModel(),
     SearchView.OnQueryTextListener {
@@ -23,17 +29,50 @@ object GameMemStore : AnkoLogger, ViewModel(),
     var steamList = ArrayList<SteamAppModel>()
     lateinit var jsonHelper : jsonHelper
     lateinit var context: Context
+    lateinit var mainAppFrame : View
 
     fun findAll(): MutableLiveData<ArrayList<GameModel>>? {
+        /**
+         * On first launch: Load cached app id list.
+         * If out of date or missing - block the thread and download the newest version
+         * TODO: Running non blocked would require locking user from adding anything new until file downloads?
+         * TODO: Download could be covered by a loading splash screen (user login as well)
+         */
+        //We always need jsonHelper so initialize it first
+        jsonHelper = jsonHelper()
         if(steamList.count() == 0){
-            runBlocking {
-                jsonHelper = jsonHelper()
-                if (jsonHelper.fileExists(STEAMAPP_FILE, context) && jsonHelper.lastFileUpdate(STEAMAPP_FILE, context) < 60){
-                    steamList = jsonHelper.loadIdsFromJson(context)
+            GlobalScope.launch {
+                delay(100L)
+                var downloaded = false
+
+                this.launch {
+                    delay(10000L)
+                    if (!downloaded) {
+                        val sb = Snackbar.make(
+                            mainAppFrame,
+                            R.string.connection_problem,
+                            Snackbar.LENGTH_INDEFINITE
+                        )
+                        sb.setBackgroundTint(Color.RED)
+                        sb.setTextColor(Color.WHITE)
+                        sb.show()
+                    }
                 }
+
+                //TODO: Have some user info (icon? warning? Toast?) when having trouble downloading the steam app ids
+                //If app id file exists and it's less than an hour old
+                if (jsonHelper.fileExists(STEAMAPP_FILE, context) && jsonHelper.lastFileUpdate(STEAMAPP_FILE, context) < R.integer.steam_app_id_timeout){
+                    steamList = jsonHelper.loadIdsFromJson(context)
+                    downloaded = true
+                    info { "Debug4: Downloaded true" }
+                }
+                //If no file for app id or out of date
                 else{
+                    info { "GameMemStore downloading new steam app id list" }
                     steamList = jsonHelper.downloadSteamAppList() as ArrayList<SteamAppModel>
                     jsonHelper.saveIdsToJson(steamList, context)
+                    downloaded = true
+                    info { "Debug4: Downloaded true" }
                 }
             }
         }
@@ -50,6 +89,7 @@ object GameMemStore : AnkoLogger, ViewModel(),
             gamesLD!!.value = jsonHelper.loadGamesFromJson(context)
         }
 
+        info { "Debug4: Retrieved game list" }
         return gamesLD
     }
 

@@ -21,6 +21,7 @@ import com.wit.steamspares.fragments.GameListFragment
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameMemStore
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.home.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -52,6 +53,8 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
+
+        GameMemStore.mainAppFrame = mainAppFrame
 
         app = application as MainApp
         topMenu = MenuType.LIST_UNUSED
