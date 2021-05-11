@@ -23,8 +23,10 @@ import com.wit.steamspares.models.GameMemStore
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.home.*
+import kotlinx.android.synthetic.main.nav_header.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 
@@ -68,6 +70,10 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         navView.setNavigationItemSelectedListener(this)
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+
+        //TODO: Set id (and image) for user in app bar
+//        layoutInflater.inflate(R.layout.nav_header, toolbar)
+//        user_id.text = app.auth.currentUser?.email
 
         val toggle = ActionBarDrawerToggle(
             this, drawer, toolbar,
@@ -203,8 +209,17 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            //Used / unused changing
             R.id.nav_unused -> navigateTo(UsedStatus.UNUSED, addToStack = false)
             R.id.nav_used -> navigateTo(UsedStatus.USED, addToStack = false)
+
+            //Extras
+            R.id.nav_sign_out ->
+                {
+                    app.auth.signOut()
+                    startActivity<Login>()
+                    finish()
+                }
 
             else -> toast("This screen is not yet implemented")
         }

@@ -3,8 +3,14 @@
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#4c90af</color>
+
     <color name="used_game">#86E33C3C</color>
     <color name="unused_game">#7C29D664</color>
     <color name="used_game_bar">#780000</color>
     <color name="unused_game_bar">#007327</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="grey_100">#2196F3</color>
+    <color name="grey_300">#E0E0E0</color>
+    <color name="grey_500">#9E9E9E</color>
 </resources>

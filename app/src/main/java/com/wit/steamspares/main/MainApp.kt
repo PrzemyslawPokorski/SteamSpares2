@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.wit.steamspares.helpers.jsonHelper
 import com.wit.steamspares.model.SteamAppModel
 import com.wit.steamspares.models.GameMemStore
@@ -20,6 +21,7 @@ class MainApp : Application(), AnkoLogger {
 //    val gameMemStore = GameMemStore()
 
     lateinit var steamAppStore : List<SteamAppModel>
+    lateinit var auth: FirebaseAuth
 
     override fun onCreate() {
 //        gameMemStore.context = this
