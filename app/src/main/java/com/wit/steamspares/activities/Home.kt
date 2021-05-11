@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.home.*
 import kotlinx.android.synthetic.main.nav_header.*
+import kotlinx.android.synthetic.main.nav_header.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.startActivity
@@ -68,12 +69,11 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         detector = GestureDetectorCompat(this, GestureListener())
 
         navView.setNavigationItemSelectedListener(this)
+        //TODO: Set id (and image) for user in app bar
+        val navHeader = navView.getHeaderView(0)
+        navHeader.user_id.text = app.auth.currentUser?.email
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-
-        //TODO: Set id (and image) for user in app bar
-//        layoutInflater.inflate(R.layout.nav_header, toolbar)
-//        user_id.text = app.auth.currentUser?.email
 
         val toggle = ActionBarDrawerToggle(
             this, drawer, toolbar,
@@ -257,7 +257,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if(topMenu == MenuType.EDIT)
+        if(topMenu == MenuType.EDIT || drawer_layout.isDrawerOpen(GravityCompat.START))
             return super.dispatchTouchEvent(ev)
 
         if (ev.action == MotionEvent.ACTION_DOWN) {
@@ -268,8 +268,8 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
             val timeTouched = SystemClock.uptimeMillis() - touchTime
             val xDist = Math.abs(touchX - ev.rawX)
             val dir = if (touchX - ev.rawX > 0) "left" else "right"
-            info { "Debug4: Finger raised $timeTouched long with $xDist distance in direction $dir" }
-            if(timeTouched > 100 && xDist > 100 && xDist/timeTouched > 1) {
+            info { "Debug4: (TouchX: $touchX) Finger raised $timeTouched long with $xDist distance in direction $dir" }
+            if(touchX > 50 && (timeTouched > 100 && xDist > 100 && xDist/timeTouched > 1)) {
                 info { "Debug4 Its a swipe!" }
                 when(dir){
                     "left" -> navigateTo(UsedStatus.USED, false)
