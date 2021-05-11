@@ -5,6 +5,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.StorageReference
 import com.wit.steamspares.model.SteamAppModel
 import com.wit.steamspares.models.GameMemStore
@@ -16,9 +17,7 @@ class MainApp : Application(), AnkoLogger {
 //    lateinit var steamAppStore : List<SteamAppModel>
 
     lateinit var currentUser: FirebaseUser
-    lateinit var database: DatabaseReference
-    lateinit var googleSignInClient: GoogleSignInClient
-    lateinit var storage: StorageReference
+    lateinit var database: FirebaseDatabase
 
     override fun onCreate() {
         GameMemStore.context = this

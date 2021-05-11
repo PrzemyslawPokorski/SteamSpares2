@@ -32,8 +32,7 @@ class Login : AppCompatActivity(), View.OnClickListener {
         if (auth.currentUser != null) {
             // already signed in
             app.currentUser = FirebaseAuth.getInstance().currentUser!!
-            app.database = FirebaseDatabase.getInstance().reference
-            app.storage = FirebaseStorage.getInstance().reference
+            app.database = FirebaseDatabase.getInstance()
             startActivity<Home>()
         }
         else
@@ -79,8 +78,7 @@ class Login : AppCompatActivity(), View.OnClickListener {
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
                 app.currentUser = FirebaseAuth.getInstance().currentUser!!
-                app.database = FirebaseDatabase.getInstance().reference
-                app.storage = FirebaseStorage.getInstance().reference
+                app.database = FirebaseDatabase.getInstance()
 
                 startActivity<Home>()
                 // ...

@@ -71,9 +71,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
 
         //Set new user and load their games list
         info { "Home changing user to $user" }
-        GameMemStore.setUser(user)
-        val q = app.database.child("users")
-        info { q }
+        GameMemStore.setUser(app.currentUser)
         GameMemStore.getGames()
 
         toolbar.title = title
@@ -230,8 +228,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
             //Extras
             R.id.nav_sign_out ->
                 {
-                    GameMemStore.setUser("NO_USER")
-                    GameMemStore.unloadGames()
+                    GameMemStore.setUser(null)
                     AuthUI.getInstance()
                         .signOut(this)
                         .addOnCompleteListener { startActivity<Login>() }

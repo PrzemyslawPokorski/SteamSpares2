@@ -9,9 +9,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.reflect.TypeToken
 import com.wit.steamspares.R
 import com.wit.steamspares.helpers.jsonHelper
+import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.model.SteamAppModel
 import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
@@ -30,9 +35,19 @@ object GameMemStore : AnkoLogger, ViewModel(),
     lateinit var jsonHelper : jsonHelper
     lateinit var context: Context
     lateinit var mainAppFrame : View
+    lateinit var dbRef : DatabaseReference
 
-    fun setUser(user : String){
-        GAMES_FILE = "${user}_steamspares.json"
+    fun setUser(user : FirebaseUser?){
+        val database = FirebaseDatabase.getInstance()
+        if(user == null) {
+            dbRef = database.getReference("invalid-path")
+            unloadGames()
+            GAMES_FILE = "steamspares.json"
+            return
+        }
+
+        dbRef = database.getReference("users/${user.uid}/games")
+        GAMES_FILE = "${user.email}_steamspares.json"
     }
 
     fun getAppIds(){
@@ -94,6 +109,7 @@ object GameMemStore : AnkoLogger, ViewModel(),
         }
 
         info { "Debug4: Retrieved game list for $GAMES_FILE" }
+        pushAllGamesToDB()
         return gamesLD
     }
 
@@ -103,11 +119,13 @@ object GameMemStore : AnkoLogger, ViewModel(),
     }
 
     fun create(name: String, code : String, status : Boolean, notes: String) {
-        val newVal = gamesLD.value?.apply { add(GameModel(findSteamId(name), name, code, status, notes)) }
+        val newGame = GameModel(findSteamId(name), name, code, status, notes)
+        val newVal = gamesLD.value?.apply { add(newGame) }
         gamesLD.value = newVal!!
 
         info { "Debug $GAMES_FILE gamesLD is ${gamesLD.value}" }
         jsonHelper.saveGamesToJson(gamesLD.value!!, context)
+        dbRef.child(newGame.id.toString()).setValue(newGame)
         logAll()
     }
 
@@ -190,5 +208,11 @@ object GameMemStore : AnkoLogger, ViewModel(),
 
     fun unloadGames() {
         gamesLD.value?.clear()
+    }
+
+    fun pushAllGamesToDB(){
+        for(game in gamesLD.value!!){
+            dbRef.child(game.id.toString()).setValue(game)
+        }
     }
 }
