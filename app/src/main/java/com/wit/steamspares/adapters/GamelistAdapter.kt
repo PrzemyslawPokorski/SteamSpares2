@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.wit.steamspares.R
 import com.wit.steamspares.models.GameModel
 import com.squareup.picasso.Picasso
@@ -16,10 +18,14 @@ import kotlinx.android.synthetic.main.card_game.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
+interface GameListener{
+    fun onGameClick(game: GameModel)
+}
 
-class GameListAdapter constructor(
-    private var games: MutableList<GameModel>
-) : RecyclerView.Adapter<GameListAdapter.MainHolder>(), AnkoLogger {
+class GameListAdapter (
+    options: FirebaseRecyclerOptions<GameModel>,
+    private val listener : GameListener?
+) : FirebaseRecyclerAdapter<GameModel, GameListAdapter.MainHolder>(options), AnkoLogger {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         return MainHolder(
@@ -31,19 +37,18 @@ class GameListAdapter constructor(
         )
     }
 
-    override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        //TODO: Use position instead holder.adapterPosition?
-        val game = games[holder.adapterPosition]
-        holder.bind(game)
+    override fun onBindViewHolder(holder: MainHolder, position: Int, game : GameModel) {
+        holder.bind(game, listener!!)
     }
 
-    override fun getItemCount(): Int = games.size
+    //?????
+//    override fun getItemCount(): Int = games.size
 
-    class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView), AnkoLogger{
+    class MainHolder (itemView: View) : RecyclerView.ViewHolder(itemView), AnkoLogger{
         /**
          * Updates each game card view with data passed by adapter
          */
-        fun bind(game: GameModel) {
+        fun bind(game: GameModel, listener: GameListener) {
             val color = if(game.status) R.color.used_game else R.color.unused_game
             itemView.gameCardFrame.setBackgroundColor(getColor(itemView.context, color))
             itemView.tag = game

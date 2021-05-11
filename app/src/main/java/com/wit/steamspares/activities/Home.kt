@@ -1,6 +1,7 @@
 package com.wit.steamspares.activities
 
 import android.app.Activity
+import android.app.DownloadManager
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.*
@@ -16,6 +17,8 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
@@ -69,6 +72,8 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         //Set new user and load their games list
         info { "Home changing user to $user" }
         GameMemStore.setUser(user)
+        val q = app.database.child("users")
+        info { q }
         GameMemStore.getGames()
 
         toolbar.title = title
