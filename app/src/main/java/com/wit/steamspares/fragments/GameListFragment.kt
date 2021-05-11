@@ -1,6 +1,7 @@
 package com.wit.steamspares.fragments
 
 import GameListAdapter
+import GameListener
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -12,12 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import androidx.transition.TransitionInflater
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.FirebaseDatabase
 import com.wit.steamspares.R
 import com.wit.steamspares.activities.Home
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.fragment_game_list.*
+import kotlinx.android.synthetic.main.fragment_game_list.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
@@ -27,13 +31,16 @@ import org.jetbrains.anko.info
  * Use the [GameListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class GameListFragment : Fragment(), AnkoLogger {
+class GameListFragment : Fragment(), AnkoLogger, GameListener {
     private lateinit var adapter: GameListAdapter
     private var gameList = ArrayList<GameModel>()
     private var usedStatus: Boolean = false
+    lateinit var root: View
+    lateinit var app: MainApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        app = activity?.application as MainApp
 
         arguments?.let {
             if(savedInstanceState != null){
@@ -47,7 +54,6 @@ class GameListFragment : Fragment(), AnkoLogger {
         }
 
         info { "Debug2 created fragment for status $usedStatus" }
-        adapter = GameListAdapter(gameList)
     }
 
     override fun onPause() {
@@ -64,6 +70,21 @@ class GameListFragment : Fragment(), AnkoLogger {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        root = inflater.inflate(R.layout.fragment_game_list, container, false)
+
+        root.gameRecyclerView.setLayoutManager(LinearLayoutManager(context))
+
+        var query = FirebaseDatabase.getInstance()
+            .reference
+            .child("users").child(app.currentUser.uid)
+
+        var options = FirebaseRecyclerOptions.Builder<GameModel>()
+            .setQuery(query, GameModel::class.java)
+            .setLifecycleOwner(this)
+            .build()
+
+        adapter = GameListAdapter(options, this)
+        root.gameRecyclerView.adapter = adapter
 
         //Using shared view model properly broke some things in the process - might redo slightly later
         GameMemStore.gamesLD!!.observe(viewLifecycleOwner, Observer {
@@ -87,15 +108,12 @@ class GameListFragment : Fragment(), AnkoLogger {
             adapter.notifyDataSetChanged()
         })
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game_list, container, false)
+        return root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         info { "Debug: onActivityCreated - gamelist fragment "}
-        gameRecyclerView.layoutManager = LinearLayoutManager(context)
-        gameRecyclerView.adapter = adapter
 
         val menuRequest = if(usedStatus) Home.MenuType.LIST_USED else Home.MenuType.LIST_UNUSED
         (activity as Home).askForMenu(menuRequest)
@@ -156,5 +174,9 @@ class GameListFragment : Fragment(), AnkoLogger {
                     usedStatus = status
                 }
             }
+    }
+
+    override fun onGameClick(game: GameModel) {
+        info { "Debug5: onGameClick from GameListFragment listener launched - did it overwrite default behaviour?" }
     }
 }
