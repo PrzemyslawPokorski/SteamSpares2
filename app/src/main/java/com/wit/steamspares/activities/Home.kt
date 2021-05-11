@@ -47,6 +47,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
     lateinit var fragmentTransaction : FragmentTransaction
     lateinit var topMenu : MenuType
     lateinit var detector: GestureDetectorCompat
+    lateinit var user : String
 
     var touchTime : Long = 0
     var touchX : Float = 0f
@@ -62,6 +63,13 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         app = application as MainApp
         topMenu = MenuType.LIST_UNUSED
 
+        user = app.auth.currentUser?.email!!
+
+        //Set new user and load their games list
+        info { "Home changing user to $user" }
+        GameMemStore.setUser(user)
+        GameMemStore.getGames()
+
         toolbar.title = title
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
@@ -71,7 +79,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         navView.setNavigationItemSelectedListener(this)
         //TODO: Set id (and image) for user in app bar
         val navHeader = navView.getHeaderView(0)
-        navHeader.user_id.text = app.auth.currentUser?.email
+        navHeader.user_id.text = user
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
 
@@ -216,6 +224,8 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
             //Extras
             R.id.nav_sign_out ->
                 {
+                    GameMemStore.setUser("NO_USER")
+                    GameMemStore.unloadGames()
                     app.auth.signOut()
                     startActivity<Login>()
                     finish()

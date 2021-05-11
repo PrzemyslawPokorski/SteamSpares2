@@ -7,6 +7,7 @@ import androidx.annotation.UiThread
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.wit.steamspares.model.SteamAppModel
+import com.wit.steamspares.models.GameMemStore.GAMES_FILE
 import com.wit.steamspares.models.GameModel
 import kotlinx.coroutines.*
 import org.jetbrains.anko.AnkoLogger
@@ -19,7 +20,6 @@ import kotlin.collections.ArrayList
 
 class jsonHelper : AnkoLogger{
     val gson = GsonBuilder().setPrettyPrinting().create()
-    val GAMES_FILE = "steamspares.json"
     val gamesType = object : TypeToken<MutableList<GameModel>>() { }.type
     val APPIDS_FILE = "steamappids.json"
     val appidsType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
@@ -54,6 +54,7 @@ class jsonHelper : AnkoLogger{
             val outputStreamWriter = OutputStreamWriter(context.openFileOutput(GAMES_FILE, Context.MODE_PRIVATE))
             outputStreamWriter.write(jsonString)
             outputStreamWriter.close()
+            info { "Saving game list to $GAMES_FILE" }
         } catch (e: Exception) {
             Log.e("Error: ", "Cannot read file: " + e.toString());
         }
@@ -62,6 +63,7 @@ class jsonHelper : AnkoLogger{
     fun loadGamesFromJson(context: Context) : ArrayList<GameModel>{
         var jsonString = ""
         try {
+            info { "Loading game list from $GAMES_FILE" }
             jsonString = context.openFileInput(GAMES_FILE).bufferedReader().use { it.readText() }
         } catch (e: FileNotFoundException) {
             Log.e("Error: ", "file not found: " + e.toString());

@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.home.*
 
 object GameMemStore : AnkoLogger, ViewModel(),
     SearchView.OnQueryTextListener {
-    val GAMES_FILE = "steamspares.json"
+    var GAMES_FILE = "steamspares.json"
     val gameType = object : TypeToken<MutableList<GameModel>>() { }.type
     val steamAppType = object : TypeToken<MutableList<SteamAppModel>>() { }.type
     val STEAMAPP_FILE = "steamappids.json"
@@ -31,14 +31,17 @@ object GameMemStore : AnkoLogger, ViewModel(),
     lateinit var context: Context
     lateinit var mainAppFrame : View
 
-    fun findAll(): MutableLiveData<ArrayList<GameModel>>? {
+    fun setUser(user : String){
+        GAMES_FILE = "${user}_steamspares.json"
+    }
+
+    fun getAppIds(){
         /**
          * On first launch: Load cached app id list.
          * If out of date or missing - block the thread and download the newest version
          * TODO: Running non blocked would require locking user from adding anything new until file downloads?
          * TODO: Download could be covered by a loading splash screen (user login as well)
          */
-        //We always need jsonHelper so initialize it first
         jsonHelper = jsonHelper()
         if(steamList.count() == 0){
             GlobalScope.launch {
@@ -59,7 +62,6 @@ object GameMemStore : AnkoLogger, ViewModel(),
                     }
                 }
 
-                //TODO: Have some user info (icon? warning? Toast?) when having trouble downloading the steam app ids
                 //If app id file exists and it's less than an hour old
                 if (jsonHelper.fileExists(STEAMAPP_FILE, context) && jsonHelper.lastFileUpdate(STEAMAPP_FILE, context) < R.integer.steam_app_id_timeout){
                     steamList = jsonHelper.loadIdsFromJson(context)
@@ -76,20 +78,22 @@ object GameMemStore : AnkoLogger, ViewModel(),
                 }
             }
         }
+    }
 
+    fun getGames(): MutableLiveData<ArrayList<GameModel>>? {
         //TODO: Make sure this works with null safe etc
-        info { "Debug: gamesLD val ${gamesLD.value}" }
+        info { "Debug:$GAMES_FILE gamesLD val ${gamesLD.value}" }
         if(!jsonHelper.fileExists(GAMES_FILE, context)){
             jsonHelper.createFile(GAMES_FILE, context)
         }
-        info { "Debug json file exists: ${jsonHelper.fileExists(GAMES_FILE, context)}" }
-        if(gamesLD.value == null){
-            info { "Debug loading to gamesLD" }
+        info { "Debug $GAMES_FILE json file exists: ${jsonHelper.fileExists(GAMES_FILE, context)}" }
+        if(gamesLD.value == null || gamesLD.value!!.isEmpty()){
+            info { "Debug $GAMES_FILE loading to gamesLD" }
             gamesLD = MutableLiveData<ArrayList<GameModel>>()
             gamesLD!!.value = jsonHelper.loadGamesFromJson(context)
         }
 
-        info { "Debug4: Retrieved game list" }
+        info { "Debug4: Retrieved game list for $GAMES_FILE" }
         return gamesLD
     }
 
@@ -102,7 +106,7 @@ object GameMemStore : AnkoLogger, ViewModel(),
         val newVal = gamesLD.value?.apply { add(GameModel(findSteamId(name), name, code, status, notes)) }
         gamesLD.value = newVal!!
 
-        info { "Debug gamesLD is ${gamesLD.value}" }
+        info { "Debug $GAMES_FILE gamesLD is ${gamesLD.value}" }
         jsonHelper.saveGamesToJson(gamesLD.value!!, context)
         logAll()
     }
@@ -182,5 +186,9 @@ object GameMemStore : AnkoLogger, ViewModel(),
     override fun onQueryTextChange(newText: String?): Boolean {
         filterQuery.value = newText!!
         return true
+    }
+
+    fun unloadGames() {
+        gamesLD.value?.clear()
     }
 }
