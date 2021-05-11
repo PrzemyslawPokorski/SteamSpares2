@@ -60,4 +60,6 @@
     <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
     <string name="emailpassword_title_text">Please Login Below</string>
     <string name="messageLoading">Connecting to server...</string>
+    <string name="sign_in_email">Sign In with Email</string>
+    <string name="sign_in_google">Sign in with Google</string>
 </resources>

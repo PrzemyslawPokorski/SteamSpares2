@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
+import com.firebase.ui.auth.AuthUI
 import com.google.android.material.navigation.NavigationView
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.EditGameFragment
@@ -63,7 +64,7 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
         app = application as MainApp
         topMenu = MenuType.LIST_UNUSED
 
-        user = app.auth.currentUser?.email!!
+        user = app.currentUser.email!!
 
         //Set new user and load their games list
         info { "Home changing user to $user" }
@@ -226,8 +227,9 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
                 {
                     GameMemStore.setUser("NO_USER")
                     GameMemStore.unloadGames()
-                    app.auth.signOut()
-                    startActivity<Login>()
+                    AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener { startActivity<Login>() }
                     finish()
                 }
 
