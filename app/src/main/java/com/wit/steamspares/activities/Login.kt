@@ -45,7 +45,9 @@ class Login : AppCompatActivity(), View.OnClickListener {
         // [START auth_fui_create_intent]
         // Choose authentication providers
         val providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
+            AuthUI.IdpConfig.EmailBuilder()
+                .setRequireName(false)
+                .build(),
             AuthUI.IdpConfig.GoogleBuilder().build())
 
         val customLayout = AuthMethodPickerLayout
@@ -60,7 +62,6 @@ class Login : AppCompatActivity(), View.OnClickListener {
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                 .setIsSmartLockEnabled(false,true) // true,true for Smart Lock
-                .setTheme(R.style.FirebaseLoginTheme)
                 .setAuthMethodPickerLayout(customLayout)
                 .build(),
             123)

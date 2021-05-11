@@ -52,7 +52,7 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
 
-        <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="android:colorBackground">@color/colorAccent</item>
         <item name="android:textColorHint">@color/colorWhite</item>
         <item name="android:textColorPrimary">@color/colorWhite</item>
     </style>
