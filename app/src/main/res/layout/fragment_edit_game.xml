@@ -45,7 +45,7 @@
                     android:autofillHints=""
                     android:hint="@string/hint_gameTitle"
                     android:inputType="text"
-                    android:maxLength="25"
+                    android:maxLength="100"
                     android:maxLines="1"
                     android:padding="8dp"
                     android:textColor="@color/colorPrimaryDark"
