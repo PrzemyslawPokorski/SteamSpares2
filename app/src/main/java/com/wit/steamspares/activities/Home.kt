@@ -1,7 +1,6 @@
 package com.wit.steamspares.activities
 
 import android.app.Activity
-import android.app.DownloadManager
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.*
@@ -17,17 +16,15 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
 import com.wit.steamspares.R
 import com.wit.steamspares.fragments.EditGameFragment
 import com.wit.steamspares.fragments.GameListFragment
+import com.wit.steamspares.fragments.StatsFragment
 import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameMemStore
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.home.*
-import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -234,6 +231,8 @@ class Home : AppCompatActivity(), AnkoLogger, NavigationView.OnNavigationItemSel
                         .addOnCompleteListener { startActivity<Login>() }
                     finish()
                 }
+
+            R.id.nav_info -> navigateTo(StatsFragment.newInstance(GameMemStore, app.currentUser))
 
             else -> toast("This screen is not yet implemented")
         }

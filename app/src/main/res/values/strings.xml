@@ -67,4 +67,11 @@
     <string name="autoswap_msg">Do you want to set the game <![CDATA[<b><font color=#0000FF>%1$s</font></b>]]> status to be used?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="spare_games_stats">SPARE GAMES STATS</string>
+    <string name="used_games_count">Used Games:</string>
+    <string name="unused_games_count">Unused Games:</string>
+    <string name="games_total_count">Games Total:</string>
+    <string name="username_title">Name</string>
+    <string name="email_title">Email</string>
+    <string name="user_since_title">User since</string>
 </resources>
