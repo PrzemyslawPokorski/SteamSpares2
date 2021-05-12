@@ -76,7 +76,7 @@ class StatsFragment : Fragment() {
                 this.gamesUsed = gameMemStore.getUsed(true).count()
                 this.gamesUnused = gamesTotal - gamesUsed
 
-                this.username = user.displayName.toString()
+                this.username = if (user.displayName.isNullOrEmpty()) "No Display Name" else user.displayName.toString()
                 this.userid = user.uid
                 this.usermail = user.email.toString()
                 this.userSince = Instant.ofEpochSecond(user.metadata!!.creationTimestamp).atZone(
