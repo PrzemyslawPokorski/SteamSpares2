@@ -85,8 +85,6 @@ object GameMemStore : AnkoLogger, ViewModel(),
         /**
          * On first launch: Load cached app id list.
          * If out of date or missing - block the thread and download the newest version
-         * TODO: Running non blocked would require locking user from adding anything new until file downloads?
-         * TODO: Download could be covered by a loading splash screen (user login as well)
          */
         jsonHelper = jsonHelper()
         if(steamList.count() == 0){

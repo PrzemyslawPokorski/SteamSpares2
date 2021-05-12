@@ -32,7 +32,6 @@ class GameListAdapter constructor(
     }
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        //TODO: Use position instead holder.adapterPosition?
         val game = games[holder.adapterPosition]
         holder.bind(game)
     }
