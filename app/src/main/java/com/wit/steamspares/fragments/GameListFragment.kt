@@ -1,6 +1,7 @@
 package com.wit.steamspares.fragments
 
 import GameListAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -133,6 +134,18 @@ class GameListFragment : Fragment(), AnkoLogger {
             getString(R.string.status_swap) -> {
                 game.status = !game.status
                 GameMemStore.update(game.id, game.name, game.code, game.status, game.notes)
+            }
+            getString(R.string.share) -> {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, getString(R.string.giftMessage, (activity as Home).user, game.name, game.code))
+                    type = "text/plain"
+                }
+
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                startActivity(shareIntent)
+
+                //TODO: Ask user if they want to swap status to used after sending?
             }
         }
         return super.onContextItemSelected(item)

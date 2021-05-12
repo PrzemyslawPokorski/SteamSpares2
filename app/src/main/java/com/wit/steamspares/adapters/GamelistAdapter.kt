@@ -66,6 +66,7 @@ class GameListAdapter constructor(
                 menu.add(adapterPosition, v.id, 0, R.string.edit)
                 menu.add(adapterPosition, v.id, 2, R.string.delete)
                 menu.add(adapterPosition, v.id, 1, R.string.status_swap)
+                menu.add(adapterPosition, v.id, 3, R.string.share)
             }
 
             itemView.codeText.setOnClickListener {
