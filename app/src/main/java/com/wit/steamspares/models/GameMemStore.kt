@@ -1,8 +1,10 @@
 package com.wit.steamspares.models
 
 import android.app.Application
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.widget.SearchView
 import androidx.lifecycle.LiveData
@@ -11,8 +13,7 @@ import androidx.lifecycle.ViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.gson.reflect.TypeToken
 import com.wit.steamspares.R
 import com.wit.steamspares.helpers.jsonHelper
@@ -47,6 +48,36 @@ object GameMemStore : AnkoLogger, ViewModel(),
         }
 
         dbRef = database.getReference("users/${user.uid}/games")
+
+        val listener = object : ValueEventListener, ChildEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "loadGames:onCancelled", error.toException())
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                update(readGameFromDB(snapshot))
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                update(readGameFromDB(snapshot))
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                update(readGameFromDB(snapshot))
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                delete(readGameFromDB(snapshot))
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                update(readGameFromDB(snapshot))
+            }
+
+        }
+        dbRef.addChildEventListener(listener)
+
+
         GAMES_FILE = "${user.email}_steamspares.json"
     }
 
@@ -118,7 +149,7 @@ object GameMemStore : AnkoLogger, ViewModel(),
         return if(keyUsed) used else unused
     }
 
-    fun create(name: String, code : String, status : Boolean, notes: String) {
+    fun create(name: String, code : String, status : Boolean, notes: String?) {
         val newGame = GameModel(findSteamId(name), name, code, status, notes)
         val newVal = gamesLD.value?.apply { add(newGame) }
         gamesLD.value = newVal!!
@@ -129,8 +160,18 @@ object GameMemStore : AnkoLogger, ViewModel(),
         logAll()
     }
 
+    fun create(game : GameModel) {
+        val newVal = gamesLD.value?.apply { add(game) }
+        gamesLD.value = newVal!!
+
+        info { "Debug $GAMES_FILE gamesLD is ${gamesLD.value}" }
+        jsonHelper.saveGamesToJson(gamesLD.value!!, context)
+        dbRef.child(game.id.toString()).setValue(game)
+        logAll()
+    }
+
     fun update(id : Int, name: String, code : String, status : Boolean, notes: String?) {
-        var foundGame: GameModel? = gamesLD.value!!.find { p -> p.id == id }
+        val foundGame: GameModel? = gamesLD.value!!.find { p -> p.id == id }
         if (foundGame != null) {
             foundGame.id = code.hashCode()
             foundGame.name = name
@@ -141,10 +182,33 @@ object GameMemStore : AnkoLogger, ViewModel(),
             foundGame.url = getGameUrl(foundGame.appid)
             foundGame.bannerUrl = getImageUrl(foundGame.appid)
             jsonHelper.saveGamesToJson(gamesLD.value!!, context)
+            dbRef.child(foundGame.id.toString()).setValue(foundGame)
             logAll()
         }
         else
-            info { "Superdebug: Game $id, $name not found" }
+            create(name, code, status, notes)
+
+        //Update the value for observers
+        gamesLD.value = gamesLD.value
+    }
+
+    fun update(game : GameModel) {
+        val foundGame: GameModel? = gamesLD.value!!.find { p -> p.id == game.id }
+        if (foundGame != null) {
+            foundGame.id = game.id
+            foundGame.name = game.name
+            foundGame.notes = game.notes
+            foundGame.code = game.code
+            foundGame.status = game.status
+            foundGame.appid = game.appid
+            foundGame.url = game.url
+            foundGame.bannerUrl = game.bannerUrl
+            jsonHelper.saveGamesToJson(gamesLD.value!!, context)
+            dbRef.child(foundGame.id.toString()).setValue(foundGame)
+            logAll()
+        }
+        else
+            create(game)
 
         //Update the value for observers
         gamesLD.value = gamesLD.value
@@ -156,6 +220,7 @@ object GameMemStore : AnkoLogger, ViewModel(),
         //Update the value for observers
         gamesLD.value = newVal!!
         jsonHelper.saveGamesToJson(gamesLD.value!!, context)
+        dbRef.child(game.id.toString()).removeValue()
     }
 
     fun getFiltered(query : String = "") : List<GameModel>{
@@ -214,5 +279,29 @@ object GameMemStore : AnkoLogger, ViewModel(),
         for(game in gamesLD.value!!){
             dbRef.child(game.id.toString()).setValue(game)
         }
+    }
+
+    fun updateGameFromDB(game : GameModel){
+        val foundGame: GameModel? = gamesLD.value!!.find { p -> p.id == game.id }
+
+        if (foundGame == null) {
+            info { "Child changed, but no local game for this id found" }
+            create(game.name, game.code, game.status, game.notes)
+        }
+        else if(foundGame != game)
+            update(game.id, game.name, game.code, game.status, game.notes)
+    }
+
+    fun readGameFromDB(entry : DataSnapshot) : GameModel{
+        val appid = (entry.child("appid").value as Long).toInt()
+        val bannerUrl = entry.child("bannerUrl").value as String
+        val code = entry.child("code").value as String
+        val id = (entry.child("id").value as Long).toInt()
+        val name = entry.child("name").value as String
+        val notes = entry.child("notes").value as String
+        val status = entry.child("status").value as Boolean
+        val url = entry.child("url").value as String
+
+        return GameModel(appid, name, code, status, notes, url, bannerUrl)
     }
 }
