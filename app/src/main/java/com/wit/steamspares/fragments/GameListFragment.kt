@@ -3,19 +3,16 @@ package com.wit.steamspares.fragments
 import GameListAdapter
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
-import androidx.transition.TransitionInflater
 import com.wit.steamspares.R
 import com.wit.steamspares.activities.Home
-import com.wit.steamspares.main.MainApp
 import com.wit.steamspares.models.GameMemStore
 import com.wit.steamspares.models.GameModel
 import kotlinx.android.synthetic.main.fragment_game_list.*
@@ -32,6 +29,10 @@ class GameListFragment : Fragment(), AnkoLogger {
     private lateinit var adapter: GameListAdapter
     private var gameList = ArrayList<GameModel>()
     private var usedStatus: Boolean = false
+
+    private var gameshared : GameModel? = null
+    val DIALOG_CODE_UNUSED = 666
+    val DIALOG_CODE_USED = 999
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,12 +144,52 @@ class GameListFragment : Fragment(), AnkoLogger {
                 }
 
                 val shareIntent = Intent.createChooser(sendIntent, null)
-                startActivity(shareIntent)
+                gameshared = game
+                val code = if (game.status) DIALOG_CODE_USED else DIALOG_CODE_UNUSED
 
-                //TODO: Ask user if they want to swap status to used after sending?
+                startActivityForResult(shareIntent, code)
             }
         }
         return super.onContextItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        //Ask user if they want to swap status of shared game then clear the cached value
+        if(requestCode == DIALOG_CODE_UNUSED) {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this.requireContext())
+
+            builder.setMessage(Html.fromHtml(getString(R.string.autoswap_msg, gameshared?.name)))
+
+            builder.setPositiveButton(R.string.yes) {
+                dialog, _ ->
+                if(gameshared != null) {
+                    info { "Debug5: gameshared not null, should swap" }
+                    gameshared?.status = !(gameshared?.status)!!
+                    GameMemStore.update(
+                        gameshared!!.id,
+                        gameshared!!.name,
+                        gameshared!!.code,
+                        gameshared!!.status,
+                        gameshared?.notes
+                    )
+
+                    gameshared = null
+                }
+                else info { "Debug5: gameshared  null" }
+                dialog.dismiss()
+            }
+
+            builder.setNegativeButton(R.string.no) {
+                dialog, _ ->
+                gameshared = null
+                dialog.dismiss() // Do nothing
+            }
+
+            val alert: AlertDialog = builder.create()
+            alert.show()
+        }
     }
 
     companion object {
