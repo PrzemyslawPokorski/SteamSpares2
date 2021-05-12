@@ -138,7 +138,7 @@ class GameListFragment : Fragment(), AnkoLogger {
             getString(R.string.share) -> {
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, getString(R.string.giftMessage, (activity as Home).user, game.name, game.code))
+                    putExtra(Intent.EXTRA_TEXT, getString(R.string.giftMessage, (activity as Home).user, game.name, game.code, game.url))
                     type = "text/plain"
                 }
 

@@ -63,5 +63,5 @@
     <string name="sign_in_email">Sign In with Email</string>
     <string name="sign_in_google">Sign in with Google</string>
     <string name="share">Share</string>
-    <string name="giftMessage">Hey there! You got a gift from %1$s!\n\nGame: %2$s\nCode: %3$s\n\nEnjoy!</string>
+    <string name="giftMessage">Hey there! You got a gift from %1$s!\n\nGame: %2$s\nCode: %3$s\nMore details at: %4$s\n\nEnjoy!</string>
 </resources>
