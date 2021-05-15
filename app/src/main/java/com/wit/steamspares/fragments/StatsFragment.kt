@@ -10,9 +10,12 @@ import com.wit.steamspares.R
 import com.wit.steamspares.activities.Home
 import com.wit.steamspares.models.GameMemStore
 import kotlinx.android.synthetic.main.fragment_stats.*
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.*
 
 
 /**
@@ -50,7 +53,7 @@ class StatsFragment : Fragment() {
         user_id_text.text = userid
         usernametext.text = username
         usermailtext.text = usermail
-        usersincetext.text = userSince.toString()
+        usersincetext.text = "${userSince.dayOfMonth}/${userSince.monthValue}/${userSince.year}"
 
         gamestotaltext.text = gamesTotal.toString()
         gamesunusedcounttext.text = gamesUnused.toString()
@@ -79,8 +82,7 @@ class StatsFragment : Fragment() {
                 this.username = if (user.displayName.isNullOrEmpty()) "No Display Name" else user.displayName.toString()
                 this.userid = user.uid
                 this.usermail = user.email.toString()
-                this.userSince = Instant.ofEpochSecond(user.metadata!!.creationTimestamp).atZone(
-                    ZoneId.systemDefault()).toLocalDateTime()
+                this.userSince = LocalDateTime.ofEpochSecond(user.metadata!!.creationTimestamp / 1000, 0, ZoneOffset.UTC)
             }
     }
 }
